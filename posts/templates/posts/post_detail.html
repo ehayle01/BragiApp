@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="text-center mb-4">{{ post.title }}</h1>
+
+    <div class="card shadow-lg p-4">
+        <p><strong>Created on:</strong> {{ post.created_at|date:"F j, Y" }}</p>
+        <p><strong>Last updated:</strong> {{ post.updated_at|date:"F j, Y" }}</p>
+        <p><strong>Author:</strong> {{ post.author.username }}</p>
+
+        <div class="post-content my-4">
+            <p>{{ post.content }}</p>
+        </div>
+
+        {% if post.image %}
+        <div class="my-4">
+            <h3>Image:</h3>
+            <img src="{{ post.image.url }}" alt="{{ post.title }}" class="img-fluid rounded">
+        </div>
+        {% endif %}
+
+        {% if post.file %}
+        <div class="my-4">
+            <h3>File:</h3>
+            <a href="{{ post.file.url }}" class="btn btn-outline-primary" download>Download the file</a>
+        </div>
+        {% endif %}
+
+        <div class="mt-4 text-center">
+            {% if post.author == current_user %}
+            <a href="{% url 'post_edit' pk=post.pk %}" class="btn btn-warning">Edit Post</a>
+            {% endif %}
+            <a href="{% url 'post_list' %}" class="btn btn-secondary">Back to Posts</a>
+        </div>
+    </div>
+
+    <!-- Comments Section -->
+    <div class="mt-5">
+        <h3 class="mb-4">Comments</h3>
+        {% for comment in comments %}
+        <div class="list-group-item">
+            <p><strong>{{ comment.author.username }}:</strong> {{ comment.content }}</p>
+            <p class="text-muted">{{ comment.created_at|naturaltime }}</p>
+            {% if user == comment.author %}
+            <a href="{% url 'comment_delete' pk=comment.pk %}" class="btn btn-danger btn-sm">Delete</a>
+            <a href="{% url 'comment_edit' pk=comment.pk %}" class="btn btn-info btn-sm">Edit</a>
+            {% endif %}
+
+            <!-- Reply Button and Reply Count Button on the Same Line -->
+            <div class="d-flex justify-content-start align-items-center mt-2">
+                <!-- Reply Button -->
+                <a href="javascript:void(0)" class="btn btn-outline-secondary btn-sm me-2" data-bs-toggle="collapse" role="button" data-bs-target="#reply-form-{{ comment.pk }}">
+                    Reply
+                </a>
+
+                <!-- Reply Count Button: Only show if there are replies -->
+                {% if comment.replies.all.count > 0 %}
+                <a href="javascript:void(0)" class="btn btn-outline-secondary btn-sm" data-bs-toggle="collapse" role="button" data-bs-target="#replies-{{ comment.pk }}">
+                    <span id="reply-count-{{ comment.pk }}">{{ comment.replies.all.count }} Reply{{ comment.replies.all.count|pluralize }}</span>
+                </a>
+                {% endif %}
+            </div>
+
+            <!-- Reply Form Section (Collapsed by Default) -->
+            <div class="collapse mt-3" id="reply-form-{{ comment.pk }}">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ comment_form.as_p }}
+                    <input type="hidden" name="parent_comment_id" value="{{ comment.pk }}">
+                    <button type="submit" class="btn btn-primary">Post Reply</button>
+                </form>
+            </div>
+
+            <!-- Replies Section (Collapsed by Default) -->
+            <div class="collapse mt-3" id="replies-{{ comment.pk }}">
+                {% for reply in comment.replies.all %}
+                <div class="ml-4 list-group-item" style="background-color: #f8f9fa;">
+                    <p><strong>{{ reply.author.username }}:</strong> {{ reply.content }}</p>
+                    <p class="text-muted">{{ reply.created_at|naturaltime }}</p>
+                    {% if user == reply.author %}
+                    <a href="{% url 'comment_delete' pk=reply.pk %}" class="btn btn-danger btn-sm">Delete</a>
+                    <a href="{% url 'comment_edit' pk=reply.pk %}" class="btn btn-info btn-sm">Edit</a>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if user.is_authenticated %}
+    <div class="mt-4">
+        <h4>Add a Comment</h4>
+        <form method="post">
+            {% csrf_token %}
+            {{ comment_form.as_p }}
+            <button type="submit" class="btn btn-primary">Post Comment</button>
+        </form>
+    </div>
+    {% else %}
+    <p>You must be logged in to post a comment.</p>
+    {% endif %}
+</div>
+{% endblock %} 

@@ -1,0 +1,17 @@
+<!-- posts/templates/posts/comment_delete_confirm.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <h1>Confirm Deletion</h1>
+    <p>Are you sure you want to delete this comment?</p>
+
+    <p><strong>{{ comment.author.username }}:</strong> {{ comment.content }}</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Yes, delete it</button>
+    </form>
+    <a href="{% url 'post_detail' pk=comment.post.pk %}" class="btn btn-secondary mt-3">Cancel</a>
+</div>
+{% endblock %}
