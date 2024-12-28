@@ -17,6 +17,7 @@ urlpatterns = [
 
     # URL for editing a comment
     path('comment/<int:pk>/edit/', views.comment_edit, name='comment_edit'),
+    
 
     # URL for deleting a comment
     path('comment/<int:pk>/delete/', views.comment_delete, name='comment_delete'),

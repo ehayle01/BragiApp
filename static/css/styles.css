@@ -1,0 +1,18 @@
+/* Reply Item Style */
+.reply-item {
+    background-color: #f1f1f1;  /* Slightly darker background for replies */
+    margin-left: 20px;           /* Indentation for replies */
+    border-left: 3px solid #007bff;  /* A subtle left border for extra emphasis */
+    padding: 10px;
+    margin-bottom: 5px;          /* Space between nested replies */
+}
+
+/* Add hover effect to reply items to make it visually interactive */
+.reply-item:hover {
+    background-color: #e2e2e2;
+}
+
+/* Optional: Slightly different font weight for replies */
+.reply-item p {
+    font-weight: normal;
+}

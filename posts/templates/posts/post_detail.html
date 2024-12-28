@@ -60,13 +60,21 @@
                 <strong>
                     <a href="{% url 'public_profile' username=comment.author.username %}">{{ comment.author.username }}</a>:
                 </strong> 
-                {{ comment.content }}
+                <span class="comment-content" id="comment-content-{{ comment.pk }}">{{ comment.content }}</span>
             </p>
             <p class="text-muted">{{ comment.created_at|naturaltime }}</p>
+
             {% if user == comment.author %}
+            <a href="javascript:void(0)" class="btn btn-info btn-sm" onclick="editComment({{ comment.pk }})">Edit</a>
             <a href="{% url 'comment_delete' pk=comment.pk %}" class="btn btn-danger btn-sm">Delete</a>
-            <a href="{% url 'comment_edit' pk=comment.pk %}" class="btn btn-info btn-sm">Edit</a>
             {% endif %}
+
+            <!-- Edit form for comment (initially hidden) -->
+            <div id="edit-form-{{ comment.pk }}" style="display:none;">
+                <textarea id="edit-content-{{ comment.pk }}" class="form-control">{{ comment.content }}</textarea>
+                <button class="btn btn-primary btn-sm" onclick="submitEdit({{ comment.pk }})">Save</button>
+                <button class="btn btn-secondary btn-sm" onclick="cancelEdit({{ comment.pk }})">Cancel</button>
+            </div>
 
             <!-- Reply Button and Reply Count Button on the Same Line -->
             <div class="d-flex justify-content-start align-items-center mt-2">
@@ -96,18 +104,26 @@
             <!-- Replies Section (Collapsed by Default) -->
             <div class="collapse mt-3" id="replies-{{ comment.pk }}">
                 {% for reply in comment.replies.all %}
-                <div class="ml-4 list-group-item" style="background-color: #f8f9fa;">
+                <div class="ml-4 list-group-item reply-item">
                     <p>
                         <strong>
                             <a href="{% url 'public_profile' username=reply.author.username %}">{{ reply.author.username }}</a>
                         </strong>: 
-                        {{ reply.content }}
+                        <span class="comment-content" id="comment-content-{{ reply.pk }}">{{ reply.content }}</span>
                     </p>
                     <p class="text-muted">{{ reply.created_at|naturaltime }}</p>
+
                     {% if user == reply.author %}
+                    <a href="javascript:void(0)" class="btn btn-info btn-sm" onclick="editComment({{ reply.pk }})">Edit</a>
                     <a href="{% url 'comment_delete' pk=reply.pk %}" class="btn btn-danger btn-sm">Delete</a>
-                    <a href="{% url 'comment_edit' pk=reply.pk %}" class="btn btn-info btn-sm">Edit</a>
                     {% endif %}
+
+                    <!-- Edit form for reply (initially hidden) -->
+                    <div id="edit-form-{{ reply.pk }}" style="display:none;">
+                        <textarea id="edit-content-{{ reply.pk }}" class="form-control">{{ reply.content }}</textarea>
+                        <button class="btn btn-primary btn-sm" onclick="submitEdit({{ reply.pk }})">Save</button>
+                        <button class="btn btn-secondary btn-sm" onclick="cancelEdit({{ reply.pk }})">Cancel</button>
+                    </div>
                 </div>
                 {% endfor %}
             </div>
@@ -128,4 +144,46 @@
     <p>You must be logged in to post a comment.</p>
     {% endif %}
 </div>
+
+<script>
+    function editComment(commentId) {
+        // Hide the original content and show the edit form for the comment (or reply)
+        document.getElementById('comment-content-' + commentId).style.display = 'none';
+        document.getElementById('edit-form-' + commentId).style.display = 'block';
+    }
+    
+    function submitEdit(commentId) {
+        const newContent = document.getElementById('edit-content-' + commentId).value;
+    
+        // Send the AJAX request to update the comment or reply
+        fetch('{% url "comment_edit" pk=0 %}'.replace("0", commentId), {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                'content': newContent,
+            }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update the content and hide the edit form
+                document.getElementById('comment-content-' + commentId).innerText = data.content;
+                cancelEdit(commentId);  // Hide the edit form after success
+            } else {
+                alert(data.error);  // Show error message if any
+            }
+        });
+    }
+    
+    function cancelEdit(commentId) {
+        // Hide the edit form and show the original content again
+        document.getElementById('edit-form-' + commentId).style.display = 'none';
+        document.getElementById('comment-content-' + commentId).style.display = 'block';
+    }
+    </script>
+    
+
 {% endblock %}

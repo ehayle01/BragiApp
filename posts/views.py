@@ -114,24 +114,25 @@ def post_edit(request, pk):
 def comment_edit(request, pk):
     comment = get_object_or_404(Comment, pk=pk)
 
-    # Ensure the logged-in user is the author of the comment
+    # Ensure the logged-in user is the author of the comment (or reply)
     if comment.author != request.user:
         raise Http404("You are not authorized to edit this comment.")
 
     if request.method == 'POST':
-        # Handle form submission for editing the comment
         content = request.POST.get('content')
 
         if content.strip():
             comment.content = content
             comment.save()
 
-            # Return a JSON response with the updated content
+            # Return the updated content in JSON
             return JsonResponse({'success': True, 'content': comment.content})
 
         return JsonResponse({'success': False, 'error': 'Comment content cannot be empty.'})
 
-    return redirect('post_detail', pk=comment.post.pk)
+    # This view should only handle POST requests (AJAX)
+    return JsonResponse({'success': False, 'error': 'Invalid request method.'})
+
 
 
 # Delete Comment View
