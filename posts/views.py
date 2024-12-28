@@ -1,3 +1,4 @@
+#backend\posts\views.py
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Post, Comment
 from django.contrib.auth.decorators import login_required
@@ -136,3 +137,5 @@ def comment_delete(request, pk):
     post_pk = comment.post.pk
     comment.delete()
     return redirect('post_detail', pk=post_pk)
+
+

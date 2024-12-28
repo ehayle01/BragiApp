@@ -1,3 +1,4 @@
+#backend\posts\urls.py
 from django.urls import path
 from . import views
 
@@ -19,4 +20,6 @@ urlpatterns = [
 
     # URL for deleting a comment
     path('comment/<int:pk>/delete/', views.comment_delete, name='comment_delete'),
+
+    
 ]

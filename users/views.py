@@ -1,9 +1,24 @@
+#users/views.py
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, authenticate
-from django.contrib.auth.decorators import login_required  # Protect views that require login
-from posts.models import Post  # Import the Post model to access posts
+from django.contrib.auth.decorators import login_required  
+from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.models import User
+from posts.models import Post  
 from .forms import UserEditForm
+
+# Public Profile View (for viewing any user's profile)
+def public_profile_view(request, username):
+    user = get_object_or_404(User, username=username)  # Get the user by username
+    
+    # Retrieve posts created by this user
+    user_posts = Post.objects.filter(author=user).order_by('-created_at')
+
+    return render(request, 'users/public_profile.html', {
+        'user': user,
+        'user_posts': user_posts
+    })
 
 # Register View
 def register_view(request):
