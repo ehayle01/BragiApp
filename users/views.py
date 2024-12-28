@@ -13,13 +13,22 @@ from .models import UserProfile
 def public_profile_view(request, username):
     user = get_object_or_404(User, username=username)  # Get the user by username
     
+    # Retrieve the associated profile of the user
+    user_profile, created = UserProfile.objects.get_or_create(user=user)
+
     # Retrieve posts created by this user
     user_posts = Post.objects.filter(author=user).order_by('-created_at')
+    # Check if the user is logged in and pass that info to the template
+    is_authenticated = request.user.is_authenticated
 
     return render(request, 'users/public_profile.html', {
         'user': user,
-        'user_posts': user_posts
+        'user_profile': user_profile,  # Make sure to pass user_profile to the template
+        'user_posts': user_posts,
+        'is_authenticated': is_authenticated,  # Pass the authentication status
+
     })
+
 
 # Register View
 def register_view(request):
@@ -42,13 +51,19 @@ def register_view(request):
 
 
 # Profile View (requires the user to be logged in)
-@login_required  # Only logged-in users can access the profile
+@login_required
 def profile_view(request):
+    user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+
     # Retrieve posts that the logged-in user has created
     user_posts = Post.objects.filter(author=request.user).order_by('-created_at')
 
-    # Pass the posts to the template
-    return render(request, 'users/profile.html', {'user': request.user, 'user_posts': user_posts})
+    return render(request, 'users/profile.html', {
+        'user': request.user,
+        'user_profile': user_profile,  # Make sure to pass user_profile to the template
+        'user_posts': user_posts,
+    })
+
 
 
 @login_required

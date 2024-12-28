@@ -11,6 +11,7 @@ from django.http import Http404, JsonResponse
 
 
 # View for listing posts
+@login_required
 def post_list(request):
     query = request.GET.get('q')  # Get the search query from the URL parameter
     category_filter = request.GET.get('category')  # Get the category filter from the URL
@@ -48,6 +49,7 @@ def post_list(request):
 
 
 # View for displaying post details
+@login_required
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
     comments = post.comments.filter(parent=None).order_by('-created_at')  # Get top-level comments
