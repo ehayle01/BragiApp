@@ -8,20 +8,25 @@
     <div class="card shadow-lg p-4">
         <h2 class="text-center mb-4">{{ user.username }}'s Profile</h2>
 
-        <!-- Profile Info -->
         <div class="text-center mb-4">
             <h4>{{ user.username }}</h4>
-            <p class="lead">Email: {{ user.email }}</p>
-
-            <!-- You can also add other fields, like a bio or profile picture -->
-            {% if user.profile.bio %}
-                <p>{{ user.profile.bio }}</p>
-            {% endif %}
-            {% if user.profile.profile_picture %}
-                <img src="{{ user.profile.profile_picture.url }}" alt="{{ user.username }}'s Profile Picture" class="img-fluid rounded-circle" width="150">
+            <p class="lead">Email: {% if user == request.user %}{{ user.email }}{% else %}Hidden{% endif %}</p>
+        
+            {% if user_profile %}
+                {% if user_profile.bio %}
+                    <p>{{ user_profile.bio }}</p>
+                {% endif %}
+                {% if user_profile.profile_picture %}
+                    <img src="{{ user_profile.profile_picture.url }}" alt="{{ user.username }}'s Profile Picture" class="img-fluid rounded-circle" width="150">
+                {% endif %}
+                {% if user_profile.location %}
+                    <p>{{ user_profile.location }}</p>
+                {% endif %}
+            {% else %}
+                <p>No profile information available.</p>
             {% endif %}
         </div>
-
+        
         <!-- User's Posts Section -->
         <h3>{{ user.username }}'s Posts:</h3>
         <ul class="list-group mb-4">

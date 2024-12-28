@@ -1,4 +1,4 @@
-<!--backend\posts\templates\posts\post_detail.html -->
+<!-- backend\posts\templates\posts\post_detail.html -->
 {% extends "base.html" %}
 {% load humanize %}
 
@@ -12,6 +12,18 @@
         <p><strong>Author:</strong>  <a href="{% url 'public_profile' username=post.author.username %}">
             {{ post.author.username }}
         </a></p>
+
+        <!-- Display Category -->
+        <p><strong>Category:</strong> 
+            <span class="badge bg-info">{{ post.category.name }}</span>
+        </p>
+
+        <!-- Display Tags -->
+        <p><strong>Tags:</strong> 
+            {% for tag in post.tags.all %}
+                <span class="badge bg-secondary">{{ tag.name }}</span>
+            {% endfor %}
+        </p>
 
         <div class="post-content my-4">
             <p>{{ post.content }}</p>
@@ -46,9 +58,7 @@
         <div class="list-group-item">
             <p>
                 <strong>
-                    <a href="{% url 'public_profile' username=comment.author.username %}">
-                        {{ comment.author.username }}
-                    </a>:
+                    <a href="{% url 'public_profile' username=comment.author.username %}">{{ comment.author.username }}</a>:
                 </strong> 
                 {{ comment.content }}
             </p>
@@ -87,14 +97,12 @@
             <div class="collapse mt-3" id="replies-{{ comment.pk }}">
                 {% for reply in comment.replies.all %}
                 <div class="ml-4 list-group-item" style="background-color: #f8f9fa;">
-
                     <p>
                         <strong>
                             <a href="{% url 'public_profile' username=reply.author.username %}">{{ reply.author.username }}</a>
                         </strong>: 
                         {{ reply.content }}
                     </p>
-
                     <p class="text-muted">{{ reply.created_at|naturaltime }}</p>
                     {% if user == reply.author %}
                     <a href="{% url 'comment_delete' pk=reply.pk %}" class="btn btn-danger btn-sm">Delete</a>
@@ -120,4 +128,4 @@
     <p>You must be logged in to post a comment.</p>
     {% endif %}
 </div>
-{% endblock %} 
+{% endblock %}

@@ -1,18 +1,21 @@
 #backend\posts\forms.py
 from django import forms
-from .models import Post, Comment
+from .models import Post, Comment, Category, Tag
 
 
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ['title', 'content', 'image', 'file']  # Fields for creating a post
+        fields = ['title', 'content', 'image', 'file', 'category', 'tags']  # Fields for creating a post
+        widgets = {
+            'tags': forms.CheckboxSelectMultiple,  # Use checkboxes for tags
+        }
 
 
 class PostEditForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ['title', 'content', 'image']  # Fields for editing an existing post
+        fields = ['title', 'content', 'image', 'file', 'category', 'tags']  # Fields for editing an existing post
 
 
 class CommentForm(forms.ModelForm):

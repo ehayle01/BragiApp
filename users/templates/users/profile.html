@@ -2,19 +2,32 @@
 <!-- backend\users\templates\users\profile.html -->
 {% extends "base.html" %}
 
-{% block title %}Profile{% endblock %}
+{% block title %}Your Profile{% endblock %}
 
 {% block content %}
 <div class="container py-5">
     <div class="card shadow-lg p-4">
         <h2 class="text-center mb-4">Your Profile</h2>
 
-        <!-- Profile Info -->
         <div class="text-center mb-4">
             <h4>Welcome, {{ user.username }}!</h4>
             <p class="lead">Email: {{ user.email }}</p>
-        </div>
 
+            {% if user_profile %}
+                {% if user_profile.bio %}
+                    <p>{{ user_profile.bio }}</p>
+                {% endif %}
+                {% if user_profile.profile_picture %}
+                    <img src="{{ user_profile.profile_picture.url }}" alt="{{ user.username }}'s Profile Picture" class="img-fluid rounded-circle" width="150">
+                {% endif %}
+                {% if user_profile.location %}
+                    <p>{{ user_profile.location }}</p>
+                {% endif %}
+            {% else %}
+                <p>No profile information available.</p>
+            {% endif %}
+        </div>
+        
         <!-- Edit Profile Link -->
         <div class="text-center mb-4">
             <a href="{% url 'profile_edit' %}" class="btn btn-secondary">Edit Profile</a>

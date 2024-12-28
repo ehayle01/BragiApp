@@ -9,11 +9,20 @@
         <h2 class="text-center mb-4">Edit Profile</h2>
         <p class="text-center mb-4">Update your details below:</p>
 
-        <form method="POST">
+        <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
+            
+            <!-- Render the user form (username, email) -->
             <div class="mb-3">
-                {{ form.as_p }}
+                {{ user_form.as_p }}
             </div>
+            
+            <!-- Render the profile form (bio, profile picture, location) -->
+            <div class="mb-3">
+                <h4>Profile Details</h4>
+                {{ profile_form.as_p }}
+            </div>
+            
             <button type="submit" class="btn btn-primary w-100">Save Changes</button>
         </form>
 

@@ -1,12 +1,13 @@
-#users/views.py
-from django.shortcuts import render, redirect
+ #users/views.py
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required  
-from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.models import User
 from posts.models import Post  
-from .forms import UserEditForm
+from .forms import UserEditForm, UserProfileEditForm
+from .models import UserProfile 
+
 
 # Public Profile View (for viewing any user's profile)
 def public_profile_view(request, username):
@@ -26,12 +27,18 @@ def register_view(request):
         form = UserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()  # Save the user to the database
+            
+            # Create the UserProfile for the new user
+            UserProfile.objects.create(user=user)  # Automatically create the profile
+            
             login(request, user)  # Log the user in immediately after registration
-            return redirect('profile')  # Redirect to the profile page or other page after registration
+            return redirect('profile')  # Redirect to the profile page after registration
     else:
         form = UserCreationForm()  # If GET request, show an empty form
 
     return render(request, 'registration/register.html', {'form': form})  # Render the registration template
+
+
 
 
 # Profile View (requires the user to be logged in)
@@ -46,13 +53,22 @@ def profile_view(request):
 
 @login_required
 def profile_edit_view(request):
-    # Get the logged-in user's current profile data
-    if request.method == 'POST':
-        form = UserEditForm(request.POST, instance=request.user)  # Pre-populate the form with current user data
-        if form.is_valid():
-            form.save()  # Save the changes to the user profile
-            return redirect('profile')  # Redirect to the profile page after saving changes
-    else:
-        form = UserEditForm(instance=request.user)  # Initialize the form with the current user data
+    user_profile, created = UserProfile.objects.get_or_create(user=request.user)
 
-    return render(request, 'users/profile_edit.html', {'form': form})
+    if request.method == 'POST':
+        user_form = UserEditForm(request.POST, instance=request.user)
+        profile_form = UserProfileEditForm(request.POST, request.FILES, instance=user_profile)
+
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()  # Save the user data
+            profile_form.save()  # Save the profile data
+            print(f"Profile updated: {user_profile}")  # Debugging line
+            return redirect('profile')  # Redirect to the profile view after saving
+    else:
+        user_form = UserEditForm(instance=request.user)
+        profile_form = UserProfileEditForm(instance=user_profile)
+
+    return render(request, 'users/profile_edit.html', {
+        'user_form': user_form,
+        'profile_form': profile_form,
+    })

@@ -1,46 +1,53 @@
-#backend\posts\views.py
+# backend/posts/views.py
+
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Post, Comment
+from .models import Post, Comment, Category, Tag
 from django.contrib.auth.decorators import login_required
-from .forms import PostForm, PostEditForm, CommentForm, CommentEditForm
+from .forms import PostForm, PostEditForm, CommentForm
 from django.contrib.auth.models import User
 from django.db.models import Q
 from fuzzywuzzy import fuzz
-from django.http import Http404
+from django.http import Http404, JsonResponse
 
 
-
+# View for listing posts
 def post_list(request):
     query = request.GET.get('q')  # Get the search query from the URL parameter
+    category_filter = request.GET.get('category')  # Get the category filter from the URL
+    tag_filter = request.GET.get('tag')  # Get the tag filter from the URL
 
-    if query:
-        # Using fuzzy search for title and content match
-        posts = Post.objects.all()
-        
-        # Search by title, content, and author username with fuzzy matching
-        posts = [
-            post for post in posts if 
-            (fuzz.partial_ratio(post.title.lower(), query.lower()) > 60 or  # Fuzzy matching for title
-             fuzz.partial_ratio(post.content.lower(), query.lower()) > 60 or  # Fuzzy matching for content
-             fuzz.partial_ratio(post.author.username.lower(), query.lower()) > 60)  # Fuzzy matching for author
-        ]
-
-        posts.sort(key=lambda post: max(
-            fuzz.partial_ratio(post.title.lower(), query.lower()), 
-            fuzz.partial_ratio(post.content.lower(), query.lower()),
-            fuzz.partial_ratio(post.author.username.lower(), query.lower())
-        ), reverse=True)
+    posts = Post.objects.all()  # Start with all posts, then filter based on search or category/tag
     
-    else:
-        posts = Post.objects.all().order_by('-created_at')
+    # If there is a search query, perform fuzzy search on the title, content, and author
+    if query:
+        posts = posts.filter(
+            Q(title__icontains=query) | 
+            Q(content__icontains=query) | 
+            Q(author__username__icontains=query)
+        )
+
+    # Filter by category if provided
+    if category_filter:
+        posts = posts.filter(category__name__icontains=category_filter)
+
+    # Filter by tag if provided
+    if tag_filter:
+        posts = posts.filter(tags__name__icontains=tag_filter)
+
+    # Get all categories and tags to populate filters in the template
+    categories = Category.objects.all()
+    tags = Tag.objects.all()
 
     return render(request, 'posts/post_list.html', {
         'posts': posts,
         'current_user': request.user,
-        'query': query  # Pass the query to the template to pre-fill the search box
+        'query': query,  # Pre-fill the search box
+        'categories': categories,  # Pass categories for filtering
+        'tags': tags,  # Pass tags for filtering
     })
 
 
+# View for displaying post details
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
     comments = post.comments.filter(parent=None).order_by('-created_at')  # Get top-level comments
@@ -67,6 +74,8 @@ def post_detail(request, pk):
     })
 
 
+# View for creating a new post
+@login_required
 def post_create(request):
     if request.method == 'POST':
         form = PostForm(request.POST, request.FILES)  # Handle both form data and uploaded files
@@ -80,7 +89,7 @@ def post_create(request):
     return render(request, 'posts/post_form.html', {'form': form})
 
 
-# Edit Post View
+# View for editing a post
 @login_required
 def post_edit(request, pk):
     post = get_object_or_404(Post, pk=pk)
@@ -137,5 +146,3 @@ def comment_delete(request, pk):
     post_pk = comment.post.pk
     comment.delete()
     return redirect('post_detail', pk=post_pk)
-
-
