@@ -112,6 +112,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+# Define where static files will be collected
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),  # Your static files directory
 ]

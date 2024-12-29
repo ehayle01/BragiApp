@@ -15,61 +15,65 @@
 </head>
 
 <body>
-    <header class="bg-primary text-white py-3">
-        <div class="container d-flex justify-content-between align-items-center">
-            <h1 class="m-0">
-                <a href="/" class="nav-link text-white">Bragi</a>
-            </h1>
-            <!-- Navigation Links -->
-            <nav>
-                <ul class="nav">
-                    
-                    <li class="nav-item">
-                        <a href="{% url 'post_create' %}" class="nav-link text-white">Publish</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'post_list' %}" class="nav-link text-white">Posts</a>
-                    </li>
-
-                    {% if user.is_authenticated %}
-                    <!-- If the user is logged in, show profile and logout options -->
-                    <li class="nav-item">
-                        <a href="{% url 'profile' %}" class="nav-link text-white">Profile</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" onclick="document.getElementById('logout-form').submit();" class="nav-link text-white">Logout</a>
-                    </li>
-                    <form id="logout-form" action="{% url 'logout' %}" method="post" style="display: none;">
-                        {% csrf_token %}
-                    </form>
-                    {% else %}
-                    <!-- If the user is not logged in, show login and register options -->
-                    <li class="nav-item">
-                        <a href="{% url 'login' %}" class="nav-link text-white">Login</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'register' %}" class="nav-link text-white">Register</a>
-                    </li>
-                    {% endif %}
-                </ul>
-            </nav>
-            
-            <!-- Search Form in the Navigation -->
-            <form class="d-flex" method="get" action="{% url 'post_list' %}">
-                <input class="form-control me-2" type="search" name="q" placeholder="Search posts..." aria-label="Search" value="{{ query|default:'' }}">
-                <button class="btn btn-outline-light" type="submit">Search</button>
-            </form>
-
-        </div>
+    <header class="bg-primary">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+            <div class="container-fluid d-flex justify-content-between align-items-center">
+                <!-- Bragi Homepage Link (Left Aligned) -->
+                <a class="navbar-brand" href="/">Bragi</a>
+    
+                <!-- Navbar Items (Right Aligned) -->
+                {% if user.is_authenticated %}
+                    <div class="d-flex align-items-center">
+                        <!-- Publish Post Link -->
+                        <ul class="navbar-nav d-flex flex-row align-items-center mb-0">
+                            <li class="nav-item mx-1">
+                                <a href="{% url 'post_create' %}" class="btn btn-outline-light">Publish</a>
+                            </li>
+                            <li class="nav-item mx-1">
+                                <a href="/" class="btn btn-outline-light">Explore</a>
+                            </li>
+                        </ul>
+    
+                        <!-- Search Form -->
+                        <form class="d-flex ms-3" method="get" action="{% url 'post_list' %}">
+                            <input class="form-control me-1" type="search" name="q" placeholder="Search" aria-label="Search" value="{{ query|default:'' }}">
+                            <button class="btn btn-outline-light" type="submit">Search</button>
+                        </form>
+    
+                        <!-- Profile Dropdown -->
+                        <ul class="navbar-nav ms-3 mb-0">
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" id="profileDropdown" role="button" aria-expanded="false">
+                                    {% if user.is_authenticated and user.userprofile.profile_picture %}
+                                        <img src="{{ user.userprofile.profile_picture.url }}" alt="Profile Picture" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+                                    {% endif %}
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                                    <li><a class="dropdown-item" href="{% url 'profile' %}">View Profile</a></li>
+                                    <li>
+                                        <a class="dropdown-item" href="#" onclick="document.getElementById('logout-form').submit();">Logout</a>
+                                        <form id="logout-form" action="{% url 'logout' %}" method="post" style="display: none;">
+                                            {% csrf_token %}
+                                        </form>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                {% endif %}
+            </div>
+        </nav>
     </header>
+    
+    
 
-    <main class="container py-5">
+    <main class="container">
         {% block content %}
         <!-- Page-specific content will go here -->
         {% endblock %}
     </main>
 
-    <footer class="bg-dark text-white text-center py-3">
+    <footer class="text-dark text-center py-1">
         <p>&copy; 2024 Bragi - All Rights Reserved</p>
     </footer>
 
