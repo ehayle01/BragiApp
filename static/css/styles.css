@@ -1,7 +1,88 @@
 /* backend\static\css\styles.css */
-.container-fluid {
-    max-width: 1200px; /* Adjust as needed for your layout */
-    margin: 0 auto;
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* Fixed Navbar at Top */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    margin: 0px;
+    padding: 0px;
+    width: 100%;
+    height: 52px;
+    background-color: #FFFBFF;
+    border: 1px solid #C2BFC2;
+}
+/* Show dropdown on hover */
+.dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+/* Prevent dropdown menu from going off the screen */
+.dropdown-menu {
+    position: absolute;
+    right: 0; /* Align to the right edge of the parent container */
+    left: auto; /* Disable alignment to the left */
+    transform: translateX(0); /* Ensure proper positioning */
+    min-width: 150px; /* Adjust as needed for content */
+    transition: opacity 0.2s ease-in-out;
+    margin-top: 0; /* Removes Bootstrap's margin */
+}
+
+
+/* Fixed Vertical Navbar on Left */
+.navbar-verticle-left {
+    position: fixed;
+    top: 51px;
+    left: 0;
+    padding: 0;
+    margin: 0;
+    width: auto;
+   /* width: 112px;  Set the width for the sidebar */
+    max-width: 112px;
+    height: 100%; /* Full height of the page */
+    background-color: #FFFBFF;
+    border: 1px solid #C2BFC2;
+    color: white;
+}
+
+.navbar-verticle-left .search-form {
+    border-bottom: 1px solid #C2BFC2;
+    padding: 8px;
+}
+
+.navbar-verticle-left ul {
+    list-style-type: none;
+    padding: 0px;
+    margin: 0;
+}
+
+.navbar-verticle-left ul li{
+    list-style-type: none;
+    margin: 0;
+    padding: 8px 12px;
+}
+.navbar-verticle-left ul li:hover {
+    background-color: #e2e2e2;
+}
+.navbar-verticle-left ul li a{
+    text-decoration: none;
+    color: #000000;
+}
+.navbar-verticle-left ul li p{
+    color: #9b9b9b;
+    padding: 0;
+    margin: 0;
+    font-size: small;
+}
+
+.container {
+    width: 100%;
+    margin: 62px 112px;
 }
 
 /* Reply Item Style */
@@ -20,24 +101,3 @@
 .reply-item p {
     font-weight: normal;
 }
-
-
-
-/* Show dropdown on hover */
-.dropdown:hover .dropdown-menu {
-    display: block;
-}
-
-/* Prevent dropdown menu from going off the screen */
-.dropdown-menu {
-    position: absolute;
-    right: 0; /* Align to the right edge of the parent container */
-    left: auto; /* Disable alignment to the left */
-    transform: translateX(0); /* Ensure proper positioning */
-    min-width: 150px; /* Adjust as needed for content */
-    transition: opacity 0.2s ease-in-out;
-    margin-top: 0; /* Removes Bootstrap's margin */
-}
-
-
-

@@ -3,7 +3,7 @@
 {% block title %}Edit Post{% endblock %}
 
 {% block content %}
-<div class="container py-5">
+<div class="container-edit-post">
     <h2 class="text-center mb-4">Edit Post</h2>
 
     <div class="card shadow-lg p-4">
@@ -19,5 +19,5 @@
             <a href="{% url 'post_detail' pk=post.pk %}" class="btn btn-outline-secondary">Cancel</a>
         </div>
     </div>
-</div>
+
 {% endblock %}
