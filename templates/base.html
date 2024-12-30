@@ -67,48 +67,48 @@
         </nav>
     </header>
 
-    <div class="">
-        <!-- Fixed Vertical Sidebar -->
-        <div class="navbar-verticle-left">
-            <!-- Search Form -->
-            <form class="search-form" method="get" action="{% url 'post_list' %}">
-                <input class="form-control" type="search" name="q" placeholder="Search..." aria-label="Search" value="{{ query|default:'' }}">
-            </form>
+   
+    {% if user.is_authenticated %}
+     <!-- Fixed Vertical Sidebar -->
+    <div class="navbar-verticle-left">
 
-            <ul class="">
-                <li class="">
-                    <a href="#">Market</a>
-                    <p>Sub text</p>
-                </li>
-                <li class="">
-                    <a href="#">Watchlist</a>
-                    <p>Sub text</p>
-                </li>
-                <li  class="">
-                    <a href="#">Vender</a>  
-                    <p>Sub text</p>
-                </li>
-                <li class="">
-                    <a href="#">Affiliates</a>
-                    <p>Sub text</p>
-                </li>
-                <li class="">
-                    <a href="#">Categories</a>
-                    <p>Sub text</p>
-                </li>
-                <li class="">
-                    <a href="#">Portfolio</a>
-                    <p>Sub text</p>
-                </li>
-            </ul>
-        </div>
+        <!-- Render the external image outside the list -->
+        {% if toolbar %}
+            {% if toolbar.image %}
+                <a href="{{ toolbar.url }}" target="_blank">
+                    <img src="{{ toolbar.image.url }}" alt="{{ toolbar.alt_text }}" class="p-1" style="width: 100%; height: auto; object-fit: cover; border-radius: 12px;">
+                </a>
+            {% endif %}
+        {% endif %}
 
-        <main class="container">
-            {% block content %}
-            <!-- Page-specific content will go here -->
-            {% endblock %}
-        </main>
+        <!-- Search Form -->
+        <form class="search-form" method="get" action="{% url 'post_list' %}">
+            <input class="form-control" type="search" name="q" placeholder="Search..." aria-label="Search" value="{{ query|default:'' }}">
+        </form>
+
+        <ul class="list-unstyled">
+            {% for item in toolbar_items %}
+                <li>
+                    <a href="{{ item.url }}" class="text-decoration-none">
+                        {{ item.name }}
+                    
+                    {% if item.subtext %}
+                        <small class="text-muted">{{ item.subtext }}</small>
+                    {% endif %}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
     </div>
+    {% endif %}
+
+    <main class="container">
+        {% block content %}
+        <!-- Page-specific content will go here -->
+        {% endblock %}
+    </main>
+
+  
 
     <footer class="text-dark text-center py-1">
         <p>&copy; 2024 Bragi - All Rights Reserved</p>

@@ -1,0 +1,13 @@
+<!-- backend\toolbar\templates\toolbar\manage_toolbar.html-->
+{% extends "base.html" %}
+
+{% block content %}
+
+    <h1>Manage Toolbar Items</h1>
+
+    <ul>
+        {% for item in items %}
+            <li>{{ item.name }} - <a href="{{ item.url }}">{{ item.url }}</a></li>
+        {% endfor %}
+    </ul>
+    {% endblock %}

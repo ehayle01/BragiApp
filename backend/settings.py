@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     #
     'posts',
     'users',
+    'toolbar',
     'django.contrib.humanize',
 ]
 
@@ -57,6 +58,9 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                #
+                'toolbar.context_processors.toolbar_items',
+
             ],
         },
     },

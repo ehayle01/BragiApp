@@ -8,6 +8,8 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path('', include('posts.urls')),  # This includes all URLs from posts/urls.py
     path('users/', include('users.urls')),  # Include the users app URLs
+    path('toolbar/', include('toolbar.urls')),
+
 ]
 
 if settings.DEBUG:
