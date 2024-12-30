@@ -15,7 +15,7 @@
 </head>
 
 <body>
-    <header class="bg-primary">
+    <header>
         <!-- Fixed Top Navbar -->
         <nav class="navbar navbar-expand-lg fixed-top">
             <div class="container-fluid d-flex justify-content-between align-items-center">
@@ -88,15 +88,23 @@
 
         <ul class="list-unstyled">
             {% for item in toolbar_items %}
-                <li>
-                    <a href="{{ item.url }}" class="text-decoration-none">
-                        {{ item.name }}
-                    
-                    {% if item.subtext %}
-                        <small class="text-muted">{{ item.subtext }}</small>
-                    {% endif %}
-                    </a>
-                </li>
+                {% if not item.parent %}
+                    <!-- Display this item in the main list -->
+                    <li>
+                        <a href="{{ item.url }}" class="text-decoration-none">
+                            {{ item.name }}
+                        </a>
+                        
+                        {% if item.children.all %}
+                            <!-- Display the submenu if there are child items -->
+                            <ul class="submenu">
+                                {% for child in item.children.all %}
+                                    <li><a href="{{ child.url }}">{{ child.name }}</a></li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </li>
+                {% endif %}
             {% endfor %}
         </ul>
     </div>

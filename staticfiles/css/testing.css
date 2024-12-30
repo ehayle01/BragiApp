@@ -1,0 +1,58 @@
+/* Custom CSS for Layout */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+.layout-container {
+    display: grid;
+    grid-template-columns: 1fr; /* Just one column for the header */
+    grid-template-rows: 48px auto 1fr auto; /* 48px for header, the rest is for content */
+    grid-template-areas:
+        "header"
+        "main"
+        "footer";
+    height: 100vh;
+}
+
+.header {
+    grid-area: header; /* Position header at the top */
+    background-color: #f8f9fa;
+    height: 48px;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1050;
+}
+
+.main-container {
+    grid-area: main; /* Position the sidebar and content */
+    margin-top: 48px; /* Offset for fixed header */
+    padding: 0 32px; /* Gutter space */
+}
+
+.row {
+    margin-left: -32px;  /* Adjust for gutter */
+    margin-right: -32px; /* Adjust for gutter */
+}
+
+.col-3 {
+    width: 25%; /* Sidebar width */
+    padding-left: 32px; /* Gutter space */
+    padding-right: 32px; /* Gutter space */
+}
+
+.col-9 {
+    width: 75%; /* Main content width */
+    padding-left: 32px; /* Gutter space */
+    padding-right: 32px; /* Gutter space */
+}
+
+/* Footer styling */
+footer {
+    grid-area: footer; /* Position footer at the bottom */
+    background-color: #f8f9fa;
+    padding: 10px;
+    text-align: center;
+}

@@ -46,6 +46,37 @@ html, body {
     height: 100%; /* Full height of the page */
     background-color: #FFFBFF;
     border: 1px solid #C2BFC2;
+    color: white;
+}
+
+.navbar-verticle-left .search-form {
+    border-top: 1px solid #C2BFC2;
+    padding: 8px;
+}
+
+.navbar-verticle-left ul {
+    list-style-type: none;
+    padding: 0px;
+    margin: 0;
+}
+
+.navbar-verticle-left ul li{
+    list-style-type: none;
+    margin: 0;
+    padding: 8px 12px;
+}
+.navbar-verticle-left ul li:hover {
+    background-color: #e2e2e2;
+}
+.navbar-verticle-left ul li a{
+    text-decoration: none;
+    color: #000000;
+}
+.navbar-verticle-left ul li p{
+    color: #9b9b9b;
+    padding: 0;
+    margin: 0;
+    font-size: small;
 }
 
 .container {
@@ -69,3 +100,4 @@ html, body {
 .reply-item p {
     font-weight: normal;
 }
+

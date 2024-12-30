@@ -18,6 +18,8 @@ class ToolbarItem(models.Model):
     url = models.CharField(max_length=200, blank=True, null=True)
     order = models.IntegerField(default=0)
     visible = models.BooleanField(default=True)
+    parent = models.ForeignKey('self', blank=True, null=True, related_name='children', on_delete=models.CASCADE)  # Self-referencing ForeignKey for submenus
+
 
     class Meta:
         ordering = ['order']
