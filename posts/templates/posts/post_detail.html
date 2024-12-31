@@ -6,7 +6,7 @@
 <div class="container-post-detail">
     <h1 class="text-center mb-4">{{ post.title }}</h1>
 
-    <div class="card p-4">
+    <div class="card p-4 container-post-detail-card">
         <p><strong>Created on:</strong> {{ post.created_at|date:"F j, Y" }}</p>
         <p><strong>Last updated:</strong> {{ post.updated_at|date:"F j, Y" }}</p>
         <p><strong>Author:</strong>  <a href="{% url 'public_profile' username=post.author.username %}">

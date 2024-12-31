@@ -37,7 +37,7 @@
                 <a href="{% url 'post_detail' pk=post.pk %}" class="list-group-item-action">
                     {{ post.title }}
                 </a>
-                <small class="text-muted d-block">{{ post.created_at|date:"F j, Y" }}</small>
+                <small class="text-muted d-block stamp-darkmode">{{ post.created_at|date:"F j, Y" }}</small>
                 <!-- Display Category -->
                 <span class="badge badge-info">{{ post.category.name }}</span>
                 <!-- Display Tags -->
