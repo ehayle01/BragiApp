@@ -1,53 +1,81 @@
 /* backend\static\css\styles.css */
-html, body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-}
 
 /* Fixed Navbar at Top */
 .navbar {
     position: fixed;
+    padding: 0;
     top: 0;
     left: 0;
-    margin: 0px;
-    padding: 0px;
     width: 100%;
     height: 52px;
     background-color: #FFFBFF;
     border: 1px solid #C2BFC2;
-}
-/* Show dropdown on hover */
-.dropdown:hover .dropdown-menu {
-    display: block;
+    z-index: 1000; /* Ensure navbar stays above other elements */
 }
 
-/* Prevent dropdown menu from going off the screen */
-.dropdown-menu {
+/* Prevent dropdown menu from breaking */
+.navbar .dropdown-menu {
     position: absolute;
-    right: 0; /* Align to the right edge of the parent container */
-    left: auto; /* Disable alignment to the left */
-    transform: translateX(0); /* Ensure proper positioning */
-    min-width: 150px; /* Adjust as needed for content */
-    transition: opacity 0.2s ease-in-out;
-    margin-top: 0; /* Removes Bootstrap's margin */
+    right: 0; /* Align dropdown to the right edge */
+    transform: translateX(0); /* Prevent any unwanted shifts */
+    min-width: 150px; /* Ensure consistent dropdown width */
+    display: none; /* Default to hidden */
+    z-index: 1000; /* Keep dropdown above other content */
+}
+
+.navbar .dropdown:hover .dropdown-menu {
+    display: block; /* Show dropdown on hover */
+}
+
+.navbar .dropdown-menu li {
+    white-space: nowrap; /* Prevent text from wrapping in dropdown items */
+}
+
+/* Disable responsiveness for the navbar links */
+.navbar-nav {
+    flex-direction: row; /* Keep items in a single row */
+    justify-content: flex-end;
+}
+
+.navbar-nav .nav-item {
+    margin-left: 8px; /* Add consistent spacing between items */
+}
+
+.navbar-nav .nav-item a{
+    padding: 4px 8px; 
 }
 
 
-/* Fixed Vertical Navbar on Left */
+/* Wrapper for the sidebar and main content */
+.content-wrapper {
+    display: flex;                  /* Use Flexbox for row layout */
+    height: calc(100vh - 52px);     /* Full height minus the top navbar height */
+    margin-top: 51px;               /* Push below the fixed navbar */
+    overflow: hidden;               /* Prevent unnecessary scrolling */
+}
+
+/* Sidebar */
 .navbar-verticle-left {
-    position: fixed;
-    top: 51px;
-    left: 0;
-    padding: 0;
-    margin: 0;
-    width: 112px; 
-    max-width: 112px;
-    height: 100%; /* Full height of the page */
-    background-color: #FFFBFF;
-    border: 1px solid #C2BFC2;
-    color: white;
+    width: 144px;                   /* Fixed width for the sidebar */
+    flex-shrink: 0;                 /* Prevent shrinking */
+    background-color: #FFFBFF;      /* Keep your current background */
+    border: 1px solid #C2BFC2;      /* Keep your current border */
+    height: 100%;                   /* Full height */
+    overflow-y: auto;               /* Enable scrolling if content overflows */
 }
+
+/* Main content area */
+.main {
+    flex-grow: 1;                   /* Take up the remaining space */
+    padding: 16px;                  /* Optional: Add padding for main content */
+    overflow-y: auto;               /* Allow vertical scrolling if needed */
+    background-color: white;        /* Optional: Ensure the main area has a distinct background */
+}
+
+
+
+
+
 
 .navbar-verticle-left .search-form {
     border-top: 1px solid #C2BFC2;
@@ -63,7 +91,7 @@ html, body {
 .navbar-verticle-left ul li{
     list-style-type: none;
     margin: 0;
-    padding: 8px 12px;
+    padding: 4px 12px;
 }
 .navbar-verticle-left ul li:hover {
     background-color: #e2e2e2;
@@ -78,11 +106,25 @@ html, body {
     margin: 0;
     font-size: small;
 }
-
-.container {
-    width: 100%;
-    margin: 62px 112px;
+/* Submenu hidden by default */
+.submenu {
+    display: none;
+    padding-left: 20px; /* Optional: Add indentation for submenu items */
 }
+
+/* Show submenu when the parent has a specific class */
+.has-submenu.active .submenu {
+    display: block;
+}
+
+
+
+
+
+
+
+
+
 
 /* Reply Item Style */
 .reply-item {
