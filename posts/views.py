@@ -10,6 +10,16 @@ from fuzzywuzzy import fuzz
 from django.http import Http404, JsonResponse
 
 
+form = PostForm()
+
+# Add classes to form fields directly in the view
+form.fields['title'].widget.attrs.update({'class': 'form-control rounded'})
+form.fields['content'].widget.attrs.update({'class': 'form-control rounded'})
+form.fields['category'].widget.attrs.update({'class': 'form-select rounded'})
+form.fields['tags'].widget.attrs.update({'class': 'form-control rounded'})
+form.fields['image'].widget.attrs.update({'class': 'form-control rounded'})
+
+
 # View for listing posts
 @login_required
 def post_list(request):

@@ -9,9 +9,16 @@
     <div class="card p-4 container-post-detail-card">
         <p><strong>Created on:</strong> {{ post.created_at|date:"F j, Y" }}</p>
         <p><strong>Last updated:</strong> {{ post.updated_at|date:"F j, Y" }}</p>
-        <p><strong>Author:</strong>  <a href="{% url 'public_profile' username=post.author.username %}">
-            {{ post.author.username }}
-        </a></p>
+
+        <p><strong>Author:</strong>  
+            <div class="d-flex align-items-center">
+                {% if post.author.userprofile.profile_picture %}
+                <img src="{{ post.author.userprofile.profile_picture.url }}" alt="{{ post.author.username }}'s profile" class="rounded-circle" width="30" height="30">
+                
+                {% endif %}
+                <a href="{% url 'public_profile' username=post.author.username %}">{{ post.author.username }}</a>
+            </div>    
+        </p>
 
         <!-- Display Category -->
         <p><strong>Category:</strong> 
