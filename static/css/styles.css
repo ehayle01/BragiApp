@@ -135,46 +135,6 @@
     display: block;
 }
 
-/* Reply Item Style */
-.reply-item {
-    background-color: var(--reply-bg-color);  /* Slightly darker background for replies */
-    margin-left: 20px;           /* Indentation for replies */
-    border-left: 3px solid var(--reply-border-color);  /* A subtle left border for extra emphasis */
-    padding: 10px;
-    margin-bottom: 5px;          /* Space between nested replies */
-}
-
-/* Add hover effect to reply items to make it visually interactive */
-.reply-item:hover {
-    background-color: var(--reply-hover-bg-color);
-}
-
-/* Optional: Slightly different font weight for replies */
-.reply-item p {
-    font-weight: normal;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 /* Dark Mode Styles */
@@ -183,15 +143,12 @@ body.dark-mode {
     color: #ffffff; /* Light text */
 }
 
-/* Additional dark mode customizations */
 body.dark-mode .navbar {
     background-color: #000000; /* Dark navbar */
     border-color: #444444;
 }
-/* Additional dark mode customizations */
 body.dark-mode .navbar a {
     color: #ffffff; /* Dark navbar */
-    
 }
 
 body.dark-mode .main {
@@ -235,12 +192,43 @@ body.dark-mode .container-public-profile-card
 {
     background-color: #000000;
 }
-.container-post-detail-card p {
-    color: #000000;
+
+
+/* post list card styles */
+.container-post-list{
+    padding: 0;
+    margin: 0;
+}
+
+.container-post-list .container{
+    padding: 0;
+}
+.container-post-list .container .row{
+    padding: 0;
+    margin: 0;
 }
 
 
 
+.post-settings {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 10px;
+}
+
+/* post detail card styles */
+.container-post-detail-card p {
+    color: #000000;
+}
+
+.container-post-detail-card img {
+    max-width: 100%; /* Limit width to the parent's width */
+    max-height: 1080px; /* Limit height to 1080px */
+    height: auto; /* Maintain aspect ratio */
+    display: block; /* Remove inline spacing */
+    margin: 0 auto; /* Center the image horizontally */
+}
 
 
 /* post list card styles */
@@ -266,7 +254,8 @@ body.dark-mode .container-public-profile-card
     gap: 10px;         /* Add space between profile picture and name */
 }
 
-/* Badge colors for Category and Tags */
+
+/* Badge colors for Category and Tags card styles */
 .badge {
     font-size: 0.9rem;
     padding: 6px 12px;
@@ -283,38 +272,55 @@ body.dark-mode .container-public-profile-card
 
 /* Post Image Styling */
 .post-image {
-    max-height: 300px;
+    max-height: 64vh;
     object-fit: cover;
     border-radius: 8px;
     margin-bottom: 15px;
 }
 
-
-
-
-/*** custom page styles ***/
-
-.container-post-form-card {
-    
+/* Reply Item Style */
+.reply-item {
+    background-color: var(--reply-bg-color);  /* Slightly darker background for replies */
+    margin-left: 20px;           /* Indentation for replies */
+    border-left: 3px solid var(--reply-border-color);  /* A subtle left border for extra emphasis */
+    padding: 10px;
+    margin-bottom: 5px;          /* Space between nested replies */
 }
 
-/* General container for the post form */
-.container-post-form {
-    max-width: 900px;
-    margin: 30px auto;
-    padding: 20px;
-    background-color: #f8f9fa;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+/* Add hover effect to reply items to make it visually interactive */
+.reply-item:hover {
+    background-color: var(--reply-hover-bg-color);
 }
+
+/* Optional: Slightly different font weight for replies */
+.reply-item p {
+    font-weight: normal;
+}
+
+
+
+
 
 /* Card styling for the form */
 .container-post-form-card {
+    max-width: 400px;
+    margin: 30px auto;
     background-color: #ffffff;
     padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
+/*
+.container-post-form-card form {
+    border: 1px solid blue;
+}
+
+.container-post-form-card  .input-group{
+    border: 1px solid green;
+    margin: 0;
+    padding: 0;
+} 
+*/
+
+
 
 /* Heading style */
 h2.text-center {
