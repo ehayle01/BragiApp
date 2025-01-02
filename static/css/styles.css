@@ -11,7 +11,6 @@
     --reply-border-color: #007bff;
     --reply-hover-bg-color: #e2e2e2;
     --main-bg-color: white;
-    --main-padding: 16px;
     --item-padding: 4px 12px;
     --font-color: #000000;
     --font-color-light: #9b9b9b;
@@ -217,42 +216,6 @@ body.dark-mode .container-public-profile-card
     padding: 10px;
 }
 
-/* post detail card styles */
-.container-post-detail-card p {
-    color: #000000;
-}
-
-.container-post-detail-card img {
-    max-width: 100%; /* Limit width to the parent's width */
-    max-height: 1080px; /* Limit height to 1080px */
-    height: auto; /* Maintain aspect ratio */
-    display: block; /* Remove inline spacing */
-    margin: 0 auto; /* Center the image horizontally */
-}
-
-
-/* post list card styles */
-/* Adjusting text styles for better readability */
-.post-title {
-    font-size: 1.5rem; /* Larger title */
-    font-weight: 700;  /* Make title bold */
-    color: #333;      /* Darker title text for contrast */
-    transition: color 0.3s ease; /* Smooth color change on hover */
-}
-
-
-.post-content {
-    font-size: 1rem;  /* Slightly bigger body text */
-    line-height: 1.6;  /* Better readability with line height */
-    color: #555;      /* Slightly lighter text */
-}
-
-/* Author section styling */
-.author-profile {
-    display: flex;
-    align-items: center;
-    gap: 10px;         /* Add space between profile picture and name */
-}
 
 
 /* Badge colors for Category and Tags card styles */
@@ -299,26 +262,6 @@ body.dark-mode .container-public-profile-card
 
 
 
-
-
-/* Card styling for the form */
-.container-post-form-card {
-    max-width: 400px;
-    margin: 30px auto;
-    background-color: #ffffff;
-    padding: 30px;
-}
-/*
-.container-post-form-card form {
-    border: 1px solid blue;
-}
-
-.container-post-form-card  .input-group{
-    border: 1px solid green;
-    margin: 0;
-    padding: 0;
-} 
-*/
 
 
 

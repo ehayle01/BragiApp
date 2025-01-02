@@ -1,10 +1,10 @@
 <!-- backend\posts\templates\posts\post_list.html-->{% extends "base.html" %}
 
 {% block content %}
-<div class="container-post-list">
+<div class="" style="padding: 16px 3%;">
 
     <!-- Search and Filter Section -->
-    <form method="get" class="mb-4">
+    <form method="get">
         <div class="row">
             <!-- Category Filter -->
             <div class="col-md-3 mb-2">
@@ -28,21 +28,19 @@
         </div>
     </form>
 
-    {% if post.image %}
-    <img src="{{ post.image.url }}" alt="{{ post.title }}" class="post-image">
-    {% endif %}
-
     <!-- Post List -->
-    <div class="container">
+    <div class="">
+        
         <div class="row">
+            
             {% for post in posts %}
-            <div class="col-12 col-md-6 mb-4">
-                <div class="card">
+            <div class="col-12 col-lg-6 mb-4">
+                <div class="card" style="max-height: 65vh; overflow: hidden; position: relative; border: none; border-radius: 1rem;">
                     {% if post.image %}
-                        <a href="{% url 'post_detail' pk=post.pk %}" class="h5 text-decoration-none"><img src="{{ post.image.url }}" alt="{{ post.title }}" class="img-fluid w-100 post-image">
+                        <a href="{% url 'post_detail' pk=post.pk %}" class=""><img src="{{ post.image.url }}" alt="{{ post.title }}" style="border-radius: none; width: 100%; height: 80%; object-fit: cover; object-position: center;">
                     {% endif %}
-                    <div class="card-body">
-                        <a href="{% url 'post_detail' pk=post.pk %}" class="h5 text-decoration-none">{{ post.title }}</a>
+                    <div class="card-body" style="position: absolute; bottom: 0; left: 0;">
+                        <a href="{% url 'post_detail' pk=post.pk %}" class="h6 text-decoration-none">{{ post.title }}</a>
                         
                         <!-- Author with profile picture -->
                         <div class="d-flex align-items-center mt-2">
@@ -50,7 +48,7 @@
                             <img src="{{ post.author.userprofile.profile_picture.url }}" alt="{{ post.author.username }}'s profile" class="rounded-circle" width="30" height="30">
                             
                             {% endif %}
-                            <a href="{% url 'public_profile' username=post.author.username %}" class="ms-2">{{ post.author.username }}</a>
+                            <a href="{% url 'public_profile' username=post.author.username %}" class="ms-2 text-decoration-none">{{ post.author.username }}</a>
                         </div>
 
                         <p class="text-muted d-block stamp-darkmode">{{ post.created_at|date:"F j, Y" }}</p>
@@ -72,9 +70,11 @@
                     {% endif %}
                 </div>
             </div>
+
             {% empty %}
             <p>No posts available yet.</p>
             {% endfor %}
+
         </div>
     </div>
 

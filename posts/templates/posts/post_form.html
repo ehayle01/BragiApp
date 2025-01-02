@@ -1,35 +1,39 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container-post-form">
-    <div class="card p-4 container-post-form-card">
-        <h2 class="text-center mb-4">Create a New Post</h2>
-        <form method="post" enctype="multipart/form-data">
+<div class="">
+    <div class="text-left" style="position: sticky; top: 0; margin: 0; padding: 0; background-color: #ffffff; border-bottom: 1px solid var(--navbar-border-color); ">
+        <a href="{% url 'post_list' %}" class="btn"><i class="fa-solid fa-chevron-left"></i></a>
+    </div>
+    <div class="" style="padding: 16px 3%;">
+        <h4 class="">Create a New Post</h4>
+        <form method="post" enctype="multipart/form-data" class="">
             {% csrf_token %}
+
+    
             
             <!-- Post Title -->
             <div class="mb-3">
                 <label for="id_title" class="form-label">Post Title</label>
-                <div class="input-group">
-                    <span class="input-group-text border-0" id="title-addon">📝</span>
+                <div>
                     {{ form.title }}
                 </div>
+                
+                <div id="helpText" class="form-text">We'll never share your email with anyone else.</div>
             </div>
-
-            <!-- Post Content -->
+            <!-- Post Summary -->
             <div class="mb-3">
-                <label for="id_content" class="form-label">Content</label>
+                <label for="id_content" class="form-label">Summary</label>
                 <div class="input-group">
-                    <span class="input-group-text border-0" id="content-addon">📄</span>
                     {{ form.content }}
                 </div>
+                <div id="helpText" class="form-text">We'll never share your email with anyone else.</div>
             </div>
 
             <!-- Post Category -->
             <div class="mb-3">
                 <label for="id_category" class="form-label">Category</label>
-                <div class="input-group">
-                    <span class="input-group-text border-0" id="category-addon">📚</span>
+                <div>
                     {{ form.category }}
                 </div>
             </div>
@@ -38,21 +42,22 @@
             <div class="mb-3">
                 <label for="id_tags" class="form-label">Tags</label>
                 <div class="input-group">
-                    <span class="input-group-text border-0" id="tags-addon">🏷️</span>
                     {{ form.tags }}
                 </div>
             </div>
 
+
+
             <!-- Post Image -->
             <div class="mb-3">
-                <label for="id_image" class="form-label">Post Image</label>
-                <div class="input-group">
-                    <span class="input-group-text border-0" id="image-addon">🖼️</span>
+                <label for="formFile" class="form-label">Image Upload</label>
+                <div class="">
                     {{ form.image }}
                 </div>
             </div>
+              
 
-            <button type="submit" class="btn btn-primary w-100">Submit</button>
+            <button type="submit" class="btn btn-dark">Submit</button>
         </form>
     </div>
 </div>

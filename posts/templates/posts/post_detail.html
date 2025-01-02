@@ -3,66 +3,46 @@
 {% load humanize %}
 
 {% block content %}
-<div class="container-post-detail">
-    <h1 class="text-center mb-4">{{ post.title }}</h1>
 
-    <div class="card p-4 container-post-detail-card">
-        <p><strong>Created on:</strong> {{ post.created_at|date:"F j, Y" }}</p>
-        <p><strong>Last updated:</strong> {{ post.updated_at|date:"F j, Y" }}</p>
-
-        <p><strong>Author:</strong>  
-            <div class="d-flex align-items-center">
-                {% if post.author.userprofile.profile_picture %}
-                <img src="{{ post.author.userprofile.profile_picture.url }}" alt="{{ post.author.username }}'s profile" class="rounded-circle" width="30" height="30">
-                
-                {% endif %}
-                <a href="{% url 'public_profile' username=post.author.username %}">{{ post.author.username }}</a>
-            </div>    
-        </p>
-
-        <!-- Display Category -->
-        <p><strong>Category:</strong> 
-            <span class="badge bg-info">{{ post.category.name }}</span>
-        </p>
-
-        <!-- Display Tags -->
-        <p><strong>Tags:</strong> 
-            {% for tag in post.tags.all %}
-                <span class="badge bg-secondary">{{ tag.name }}</span>
-            {% endfor %}
-        </p>
-
-        <div class="post-content my-4">
+<div class="">
+    <div class="text-left" style="position: sticky; top: 0; margin: 0; padding: 0; background-color: #ffffff; border-bottom: 1px solid var(--navbar-border-color); ">
+        <a href="{% url 'post_list' %}" class="btn"><i class="fa-solid fa-chevron-left"></i></a>
+    </div>
+    <div class="" style="padding: 16px 3%;"> 
+        <h2 class="">{{ post.title }}</h2>
+        <div>
+            {% if post.author.userprofile.profile_picture %}
+            <img src="{{ post.author.userprofile.profile_picture.url }}" alt="{{ post.author.username }}'s profile" class="rounded-circle" width="30" height="30">
+            {% endif %}
+            <a href="{% url 'public_profile' username=post.author.username %}">{{ post.author.username }}</a>
+            <p>{{ post.created_at|date:"F j, Y" }}</p>
+       <!-- <p>{{ post.updated_at|date:"F j, Y" }}</p> -->
+        </div>    
+        <div class="">
+            <ul>
+                <!-- Display Category -->
+                <li class="badge bg-primary">{{ post.category.name }}</li>
+                {% for tag in post.tags.all %}
+                <!-- Display Tags -->
+                <li  class="badge bg-secondary">{{ tag.name }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="" style="">
             <p>{{ post.content }}</p>
         </div>
-
         {% if post.image %}
-        <div class="my-4">
-            <h3>Content:</h3>
-            <img src="{{ post.image.url }}" alt="{{ post.title }}" class="img-fluid rounded">
+        <div class="">
+            <img src="{{ post.image.url }}" alt="{{ post.title }}" class="img-fluid" style="">
         </div>
-        {% endif %}
-
-        {% if post.file %}
-        <div class="my-4">
-            <h3>File:</h3>
-            <a href="{{ post.file.url }}" class="btn btn-outline-primary" download>Download the file</a>
-        </div>
-        {% endif %}
-
-        <div class="mt-4 text-center">
-            {% if post.author == current_user %}
-            <a href="{% url 'post_edit' pk=post.pk %}" class="btn btn-warning">Edit Post</a>
-            {% endif %}
-            <a href="{% url 'post_list' %}" class="btn btn-secondary">Back to Posts</a>
-        </div>
+        {% endif %}    
     </div>
 
     <!-- Comments Section -->
-    <div class="mt-5">
-        <h3 class="mb-4">Comments</h3>
+    <div class="" style="padding: 16px;">
+        <h3 class="">Comments</h3>
         {% for comment in comments %}
-        <div class="list-group-item">
+        <div class="">
             <p>
                 <strong>
                     <a href="{% url 'public_profile' username=comment.author.username %}">{{ comment.author.username }}</a>:
@@ -139,7 +119,7 @@
     </div>
 
     {% if user.is_authenticated %}
-    <div class="mt-4">
+    <div class="" style="padding: 16px;">
         <h4>Add a Comment</h4>
         <form method="post">
             {% csrf_token %}
