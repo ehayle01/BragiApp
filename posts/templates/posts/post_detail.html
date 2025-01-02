@@ -1,6 +1,8 @@
 <!-- backend\posts\templates\posts\post_detail.html -->
 {% extends "base.html" %}
 {% load humanize %}
+{% load custom_filters %}
+
 
 {% block content %}
 
@@ -10,6 +12,28 @@
     </div>
     <div class="" style="padding: 16px 1%;"> 
         <h2 class="">{{ post.title }}</h2>
+
+      
+        
+
+        <a href="{% url 'like_post' post.pk %}" class="flex items-center space-x-2 hover:text-red-500">
+            {% if post|has_liked:request.user %}
+                <i class="fas fa-heart text-red-500"></i> Unlike
+            {% else %}
+                <i class="far fa-heart text-gray-500"></i> Like
+            {% endif %}
+        </a>
+        <span>{{ post.likes.count }} likes</span>
+        
+        
+        
+        
+        
+        
+        
+
+
+
         <div>
             {% if post.author.userprofile.profile_picture %}
             <img src="{{ post.author.userprofile.profile_picture.url }}" alt="{{ post.author.username }}'s profile" class="rounded-circle" width="30" height="30">

@@ -1,5 +1,5 @@
 #backend\posts\urls.py
-from django.urls import path
+from django.urls import path, include
 from . import views
 
 urlpatterns = [
@@ -22,5 +22,6 @@ urlpatterns = [
     # URL for deleting a comment
     path('comment/<int:pk>/delete/', views.comment_delete, name='comment_delete'),
 
+    path('likes/', include('likes.urls')),
     
 ]
