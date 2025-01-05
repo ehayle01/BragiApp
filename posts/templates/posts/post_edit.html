@@ -4,52 +4,78 @@
 
 {% block content %}
 <div class="">
-    <div class="text-left" style="position: sticky; top: 0; margin: 0; padding: 0; background-color: #ffffff; border-bottom: 1px solid var(--navbar-border-color); ">
+    <!-- Back Button -->
+    <div class="text-left" style="position: sticky; top: 0; margin: 0; padding: 0; background-color: #ffffff; border-bottom: 1px solid var(--navbar-border-color);">
         <a href="{% url 'post_list' %}" class="btn"><i class="fa-solid fa-chevron-left"></i></a>
     </div>
+
+    <!-- Form Section -->
     <div class="" style="padding: 16px 1%;">
+
+        <!-- if error-->
+        {% if form.errors %}
+            <div class="alert alert-danger">
+                <ul>
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        <!-- Form start -->
+        <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            <!-- -->
+            
+            <!-- Title Field -->
             <div class="mb-3">
                 <label for="id_title" class="form-label">Title</label>
                 <div>
                     {{ form.title }}
                 </div>
             </div>
-            <!-- -->
+            
+            <!-- Content Field -->
             <div class="mb-3">
-                <label for="id_title" class="form-label">Summary</label>
+                <label for="id_content" class="form-label">Summary</label>
                 <div>
                     {{ form.content }}
                 </div>
             </div>
-            <!-- -->
+            
+            <!-- Image Field -->
             <div class="mb-3">
-                <label for="id_title" class="form-label">Image</label>
+                <label for="id_image" class="form-label">Image</label>
                 <div>
                     {{ form.image }}
                 </div>
             </div>
-            <!-- -->
+            
+            <!-- Category Field -->
             <div class="mb-3">
-                <label for="id_title" class="form-label">Category</label>
+                <label for="id_category" class="form-label">Category</label>
                 <div>
                     {{ form.category }}
                 </div>
             </div>
-            <!-- -->
+            
+            <!-- Tags Field -->
             <div class="mb-3">
-                <label for="id_title" class="form-label">Tags</label>
+                <label for="id_tags" class="form-label">Tags</label>
                 <div>
                     {{ form.tags }}
                 </div>
             </div>
+            
+            <!-- Submit and Cancel Buttons -->
             <button type="submit" class="btn btn-dark">Save Changes</button>
             <div class="mt-3">
                 <a href="{% url 'post_detail' pk=post.pk %}" class="btn btn-outline-secondary">Cancel</a>
             </div>
-
         </form>
+        
     </div>
-
+</div>
 {% endblock %}

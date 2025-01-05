@@ -1,4 +1,4 @@
-# backend/posts/views.py
+# BragiApp\posts\views.py
 
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Post, Comment, Category, Tag
@@ -6,18 +6,8 @@ from django.contrib.auth.decorators import login_required
 from .forms import PostForm, PostEditForm, CommentForm
 from django.contrib.auth.models import User
 from django.db.models import Q
-from fuzzywuzzy import fuzz
+#from fuzzywuzzy import fuzz
 from django.http import Http404, JsonResponse
-
-
-form = PostForm()
-
-# Add classes to form fields directly in the view
-form.fields['title'].widget.attrs.update({'class': 'form-control rounded'})
-form.fields['content'].widget.attrs.update({'class': 'form-control rounded'})
-form.fields['category'].widget.attrs.update({'class': 'form-select rounded'})
-form.fields['tags'].widget.attrs.update({'class': 'form-control rounded'})
-form.fields['image'].widget.attrs.update({'class': 'form-control rounded'})
 
 
 # View for listing posts
@@ -27,7 +17,7 @@ def post_list(request):
     category_filter = request.GET.get('category')  # Get the category filter from the URL
     tag_filter = request.GET.get('tag')  # Get the tag filter from the URL
 
-    posts = Post.objects.all()  # Start with all posts, then filter based on search or category/tag
+    posts = Post.objects.prefetch_related('like_set').all()
     
     # If there is a search query, perform fuzzy search on the title, content, and author
     if query:
@@ -90,23 +80,26 @@ def post_detail(request, pk):
 @login_required
 def post_create(request):
     if request.method == 'POST':
-        form = PostForm(request.POST, request.FILES)  # Handle both form data and uploaded files
+        print("POST request received")  # Add this for debugging
+        form = PostForm(request.POST, request.FILES)
         if form.is_valid():
-            form.instance.author = request.user  # Ensure the logged-in user is the author
+            form.instance.author = request.user
             form.save()
-            return redirect('post_list')  # Redirect after creating the post
+            print("Form is valid and post saved")
+            return redirect('post_list')
+        else:
+            print(form.errors)  # Log form errors if validation fails
     else:
         form = PostForm()
-
     return render(request, 'posts/post_form.html', {'form': form})
 
 
-# View for editing a post
+
 @login_required
 def post_edit(request, pk):
     post = get_object_or_404(Post, pk=pk)
 
-    # Check if the logged-in user is the author of the post
+    # Ensure the logged-in user is the author of the post
     if post.author != request.user:
         return redirect('post_list')  # Redirect to the post list if the user is not the author
 
@@ -114,11 +107,16 @@ def post_edit(request, pk):
         form = PostEditForm(request.POST, request.FILES, instance=post)
         if form.is_valid():
             form.save()
+            post.refresh_from_db()  # Refresh post to ensure it's updated
             return redirect('post_detail', pk=post.pk)  # Redirect to the post detail page after saving
+        else:
+            # Log form errors to help with debugging
+            print(form.errors)  # Check the server console for errors
     else:
         form = PostEditForm(instance=post)
 
     return render(request, 'posts/post_edit.html', {'form': form, 'post': post})
+
 
 
 # Comment Edit View

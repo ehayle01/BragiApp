@@ -1,4 +1,4 @@
-#backend\posts\urls.py
+#BragiApp\posts\urls.py
 from django.urls import path, include
 from . import views
 
@@ -13,7 +13,7 @@ urlpatterns = [
     path('post/new/', views.post_create, name='post_create'),
 
     # URL for editing a post
-    path('<int:pk>/edit/', views.post_edit, name='post_edit'),
+    path('post/<int:pk>/edit/', views.post_edit, name='post_edit'),
 
     # URL for editing a comment
     path('comment/<int:pk>/edit/', views.comment_edit, name='comment_edit'),

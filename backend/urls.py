@@ -1,4 +1,4 @@
-#backend/urls.py
+#BragiApp\backend\urls.py
 from django.contrib import admin
 from django.urls import include, path
 from django.conf import settings
@@ -9,6 +9,7 @@ urlpatterns = [
     path('', include('posts.urls')),  # This includes all URLs from posts/urls.py
     path('users/', include('users.urls')),  # Include the users app URLs
     path('toolbar/', include('toolbar.urls')),
+    path('likes/', include('likes.urls')),
 
 ]
 
