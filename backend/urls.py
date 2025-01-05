@@ -10,7 +10,7 @@ urlpatterns = [
     path('users/', include('users.urls')),  # Include the users app URLs
     path('toolbar/', include('toolbar.urls')),
     path('likes/', include('likes.urls')),
-
+    path('followers/', include('followers.urls')),
 ]
 
 if settings.DEBUG:

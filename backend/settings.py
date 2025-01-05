@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'toolbar',
     'django.contrib.humanize',
     'likes',
+    'followers',
 ]
 
 MIDDLEWARE = [

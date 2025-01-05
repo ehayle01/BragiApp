@@ -12,7 +12,7 @@
         <div class="text-center mb-4">
             <h4>{{ user.username }}</h4>
             <p class="lead">Email: {% if user == request.user %}{{ user.email }}{% else %}Hidden{% endif %}</p>
-        
+
             {% if user_profile %}
                 {% if user_profile.bio %}
                     <p>{{ user_profile.bio }}</p>
@@ -26,6 +26,23 @@
             {% else %}
                 <p>No profile information available.</p>
             {% endif %}
+
+            
+
+                <!-- Display follower/following count -->
+            <div class="follow-stats">
+                <span><strong>Followers:</strong> {{ followers_count }}</span> | 
+                <span><strong>Following:</strong> {{ following_count }}</span>
+            </div>
+            {% if user != request.user %}
+                {% if is_following %}
+                    <a href="{% url 'unfollow_user' user.id %}" class="btn btn-danger">Unfollow</a>
+                {% else %}
+                    <a href="{% url 'follow_user' user.id %}" class="btn btn-primary">Follow</a>
+                {% endif %}
+            {% endif %}
+
+            
         </div>
         
         <!-- User's Posts Section -->

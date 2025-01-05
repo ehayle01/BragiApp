@@ -7,26 +7,42 @@ from django.contrib.auth.models import User
 from posts.models import Post  
 from .forms import UserEditForm, UserProfileEditForm
 from .models import UserProfile 
+from followers.models import Follow
 
 
 # Public Profile View (for viewing any user's profile)
 def public_profile_view(request, username):
-    user = get_object_or_404(User, username=username)  # Get the user by username
+    # Get the user by username
+    user = get_object_or_404(User, username=username)  
     
     # Retrieve the associated profile of the user
     user_profile, created = UserProfile.objects.get_or_create(user=user)
-
+    
     # Retrieve posts created by this user
     user_posts = Post.objects.filter(author=user).order_by('-created_at')
-    # Check if the user is logged in and pass that info to the template
+    
+    # Check if the current user is logged in
     is_authenticated = request.user.is_authenticated
+    
+    # Check if the logged-in user is following the user whose profile is being viewed
+    is_following = False
+    if is_authenticated:
+        # Check if a Follow relationship exists
+        is_following = Follow.objects.filter(follower=request.user, followed=user).exists()
 
+    # Get the count of followers and following
+    followers_count = Follow.objects.filter(followed=user).count()  # Count of people following this user
+    following_count = Follow.objects.filter(follower=user).count()  # Count of users that this user is following
+
+    # Pass the context to the template
     return render(request, 'users/public_profile.html', {
         'user': user,
-        'user_profile': user_profile,  # Make sure to pass user_profile to the template
+        'user_profile': user_profile,
         'user_posts': user_posts,
-        'is_authenticated': is_authenticated,  # Pass the authentication status
-
+        'is_authenticated': is_authenticated,
+        'is_following': is_following,  # Include this to check if the user is following
+        'followers_count': followers_count,  # Number of followers
+        'following_count': following_count,  # Number of people the user is following
     })
 
 
