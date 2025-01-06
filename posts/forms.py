@@ -1,6 +1,6 @@
 #BragiApp\posts\forms.py
 from django import forms
-from .models import Post, Comment, Tag
+from .models import Post, Tag
 
 
 class PostForm(forms.ModelForm):
@@ -45,52 +45,3 @@ class PostEditForm(forms.ModelForm):
             'tags': forms.SelectMultiple(attrs={'class': 'form-control rounded'}),  # Changed to SelectMultiple
             'image': forms.ClearableFileInput(attrs={'class': 'form-control rounded'}),
         }
-
-
-class CommentForm(forms.ModelForm):
-    """Form for creating a new comment."""
-    class Meta:
-        model = Comment
-        fields = ['content']
-        widgets = {
-            'content': forms.Textarea(attrs={
-                'class': 'form-control rounded',
-                'placeholder': 'Write your comment here...',
-                'rows': 3,
-            }),
-        }
-
-    def clean_content(self):
-        content = self.cleaned_data.get('content')
-        if not content.strip():
-            raise forms.ValidationError("Comment content cannot be empty.")
-        return content
-
-    def save(self, commit=True, parent=None):
-        """Save a comment, optionally associating it with a parent comment."""
-        comment = super().save(commit=False)
-        if parent:
-            comment.parent = parent
-        if commit:
-            comment.save()
-        return comment
-
-
-class CommentEditForm(forms.ModelForm):
-    """Form for editing an existing comment."""
-    class Meta:
-        model = Comment
-        fields = ['content']
-        widgets = {
-            'content': forms.Textarea(attrs={
-                'class': 'form-control rounded',
-                'placeholder': 'Edit your comment...',
-                'rows': 2,
-            }),
-        }
-
-    def clean_content(self):
-        content = self.cleaned_data.get('content')
-        if not content.strip():
-            raise forms.ValidationError("Comment content cannot be empty.")
-        return content

@@ -1,9 +1,9 @@
 # BragiApp\posts\views.py
 
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Post, Comment, Category, Tag
+from .models import Post, Category, Tag
 from django.contrib.auth.decorators import login_required
-from .forms import PostForm, PostEditForm, CommentForm
+from .forms import PostForm, PostEditForm
 from django.contrib.auth.models import User
 from django.db.models import Q
 #from fuzzywuzzy import fuzz
@@ -52,27 +52,9 @@ def post_list(request):
 @login_required
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
-    comments = post.comments.filter(parent=None).order_by('-created_at')  # Get top-level comments
-
-    # Handling comment form submission (including replies)
-    if request.method == "POST":
-        comment_form = CommentForm(request.POST)
-        parent_comment = None
-        if 'parent_comment_id' in request.POST:
-            parent_comment = get_object_or_404(Comment, pk=request.POST['parent_comment_id'])
-        if comment_form.is_valid():
-            comment_form.save(commit=False, parent=parent_comment)
-            comment_form.instance.post = post
-            comment_form.instance.author = request.user
-            comment_form.save()
-            return redirect('post_detail', pk=post.pk)
-    else:
-        comment_form = CommentForm()
 
     return render(request, 'posts/post_detail.html', {
         'post': post,
-        'comments': comments,
-        'comment_form': comment_form,
     })
 
 
@@ -116,44 +98,3 @@ def post_edit(request, pk):
         form = PostEditForm(instance=post)
 
     return render(request, 'posts/post_edit.html', {'form': form, 'post': post})
-
-
-
-# Comment Edit View
-@login_required
-def comment_edit(request, pk):
-    comment = get_object_or_404(Comment, pk=pk)
-
-    # Ensure the logged-in user is the author of the comment (or reply)
-    if comment.author != request.user:
-        raise Http404("You are not authorized to edit this comment.")
-
-    if request.method == 'POST':
-        content = request.POST.get('content')
-
-        if content.strip():
-            comment.content = content
-            comment.save()
-
-            # Return the updated content in JSON
-            return JsonResponse({'success': True, 'content': comment.content})
-
-        return JsonResponse({'success': False, 'error': 'Comment content cannot be empty.'})
-
-    # This view should only handle POST requests (AJAX)
-    return JsonResponse({'success': False, 'error': 'Invalid request method.'})
-
-
-
-# Delete Comment View
-@login_required
-def comment_delete(request, pk):
-    comment = get_object_or_404(Comment, pk=pk)
-
-    # Ensure the user is the author of the comment
-    if comment.author != request.user:
-        raise Http404("You are not authorized to delete this comment.")
-
-    post_pk = comment.post.pk
-    comment.delete()
-    return redirect('post_detail', pk=post_pk)

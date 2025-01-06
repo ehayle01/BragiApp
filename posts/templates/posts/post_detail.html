@@ -43,6 +43,7 @@
             <p>{{ post.created_at|date:"F j, Y" }}</p>
        <!-- <p>{{ post.updated_at|date:"F j, Y" }}</p> -->
         </div>    
+
         <div class="">
             <ul>
                 <!-- Display Category -->
@@ -61,141 +62,39 @@
             <img src="{{ post.image.url }}" alt="{{ post.title }}" class="img-fluid" style="">
         </div>
         {% endif %}    
-    </div>
 
-    <!-- Comments Section -->
-    <div class="" style="padding: 16px;">
-        <h3 class="">Comments</h3>
-        {% for comment in comments %}
-        <div class="">
-            <p>
-                <strong>
-                    <a href="{% url 'public_profile' username=comment.author.username %}">{{ comment.author.username }}</a>:
-                </strong> 
-                <span class="comment-content" id="comment-content-{{ comment.pk }}">{{ comment.content }}</span>
-            </p>
-            <p class="text-muted">{{ comment.created_at|naturaltime }}</p>
 
-            {% if user == comment.author %}
-            <a href="javascript:void(0)" class="btn btn-info btn-sm" onclick="editComment({{ comment.pk }})">Edit</a>
-            <a href="{% url 'comment_delete' pk=comment.pk %}" class="btn btn-danger btn-sm">Delete</a>
-            {% endif %}
+        <!-- Comments Section -->
+        <div class="container mt-4">
+            <h3 class="mb-4">Comments</h3>
 
-            <!-- Edit form for comment (initially hidden) -->
-            <div id="edit-form-{{ comment.pk }}" style="display:none;">
-                <textarea id="edit-content-{{ comment.pk }}" class="form-control">{{ comment.content }}</textarea>
-                <button class="btn btn-primary btn-sm" onclick="submitEdit({{ comment.pk }})">Save</button>
-                <button class="btn btn-secondary btn-sm" onclick="cancelEdit({{ comment.pk }})">Cancel</button>
-            </div>
-
-            <!-- Reply Button and Reply Count Button on the Same Line -->
-            <div class="d-flex justify-content-start align-items-center mt-2">
-                <!-- Reply Button -->
-                <a href="javascript:void(0)" class="btn btn-outline-secondary btn-sm me-2" data-bs-toggle="collapse" role="button" data-bs-target="#reply-form-{{ comment.pk }}">
-                    Reply
-                </a>
-
-                <!-- Reply Count Button: Only show if there are replies -->
-                {% if comment.replies.all.count > 0 %}
-                <a href="javascript:void(0)" class="btn btn-outline-secondary btn-sm" data-bs-toggle="collapse" role="button" data-bs-target="#replies-{{ comment.pk }}">
-                    <span id="reply-count-{{ comment.pk }}">{{ comment.replies.all.count }} Reply{{ comment.replies.all.count|pluralize }}</span>
-                </a>
-                {% endif %}
-            </div>
-
-            <!-- Reply Form Section (Collapsed by Default) -->
-            <div class="collapse mt-3" id="reply-form-{{ comment.pk }}">
-                <form method="post">
-                    {% csrf_token %}
-                    {{ comment_form.as_p }}
-                    <input type="hidden" name="parent_comment_id" value="{{ comment.pk }}">
-                    <button type="submit" class="btn btn-primary">Post Reply</button>
-                </form>
-            </div>
-
-            <!-- Replies Section (Collapsed by Default) -->
-            <div class="collapse mt-3" id="replies-{{ comment.pk }}">
-                {% for reply in comment.replies.all %}
-                <div class="ml-4 list-group-item reply-item">
-                    <p>
-                        <strong>
-                            <a href="{% url 'public_profile' username=reply.author.username %}">{{ reply.author.username }}</a>
-                        </strong>: 
-                        <span class="comment-content" id="comment-content-{{ reply.pk }}">{{ reply.content }}</span>
-                    </p>
-                    <p class="text-muted">{{ reply.created_at|naturaltime }}</p>
-
-                    {% if user == reply.author %}
-                    <a href="javascript:void(0)" class="btn btn-info btn-sm" onclick="editComment({{ reply.pk }})">Edit</a>
-                    <a href="{% url 'comment_delete' pk=reply.pk %}" class="btn btn-danger btn-sm">Delete</a>
-                    {% endif %}
-
-                    <!-- Edit form for reply (initially hidden) -->
-                    <div id="edit-form-{{ reply.pk }}" style="display:none;">
-                        <textarea id="edit-content-{{ reply.pk }}" class="form-control">{{ reply.content }}</textarea>
-                        <button class="btn btn-primary btn-sm" onclick="submitEdit({{ reply.pk }})">Save</button>
-                        <button class="btn btn-secondary btn-sm" onclick="cancelEdit({{ reply.pk }})">Cancel</button>
+            {% for comment in post.comments.all %}
+                <div class="border rounded p-3 mb-3">
+                    <div class="d-flex justify-content-between">
+                        <strong>{{ comment.user.username }}</strong>
+                        <small class="text-muted">{{ comment.created_at|date:"F j, Y, g:i a" }}</small>
                     </div>
+                    <p>{{ comment.content }}</p>
                 </div>
-                {% endfor %}
-            </div>
+            {% empty %}
+                <div class="alert alert-info">No comments yet. Be the first to comment!</div>
+            {% endfor %}
+        
+            <h3 class="mt-4">Add a Comment</h3>
+            <form method="POST" action="{% url 'create_comment' post.id %}" class="mt-3">
+                {% csrf_token %}
+                <div class="form-group">
+                    <textarea class="form-control" name="content" rows="4" placeholder="Write your comment here..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
         </div>
-        {% endfor %}
+
+
     </div>
 
-    {% if user.is_authenticated %}
-    <div class="" style="padding: 16px;">
-        <h4>Add a Comment</h4>
-        <form method="post">
-            {% csrf_token %}
-            {{ comment_form.as_p }}
-            <button type="submit" class="btn btn-primary">Post Comment</button>
-        </form>
-    </div>
-    {% else %}
-    <p>You must be logged in to post a comment.</p>
-    {% endif %}
 </div>
 
-<script>
-    function editComment(commentId) {
-        // Hide the original content and show the edit form for the comment (or reply)
-        document.getElementById('comment-content-' + commentId).style.display = 'none';
-        document.getElementById('edit-form-' + commentId).style.display = 'block';
-    }
-    
-    function submitEdit(commentId) {
-        const newContent = document.getElementById('edit-content-' + commentId).value;
-    
-        // Send the AJAX request to update the comment or reply
-        fetch('{% url "comment_edit" pk=0 %}'.replace("0", commentId), {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': '{{ csrf_token }}',
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams({
-                'content': newContent,
-            }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Update the content and hide the edit form
-                document.getElementById('comment-content-' + commentId).innerText = data.content;
-                cancelEdit(commentId);  // Hide the edit form after success
-            } else {
-                alert(data.error);  // Show error message if any
-            }
-        });
-    }
-    
-    function cancelEdit(commentId) {
-        // Hide the edit form and show the original content again
-        document.getElementById('edit-form-' + commentId).style.display = 'none';
-        document.getElementById('comment-content-' + commentId).style.display = 'block';
-    }
-    </script>
     
 
 {% endblock %}
