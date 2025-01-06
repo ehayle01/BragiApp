@@ -64,6 +64,16 @@
                                     </li>
                                 </ul>
                             </li>
+                            <li>
+                                <a href="{% url 'notifications_list' %}">
+                                Notifications 
+                                {% if request.user.is_authenticated %}
+                                    {% if unread_count > 0 %}
+                                        <span class="notification-count" style="color: red;">({{ unread_count }})</span>
+                                    {% endif %}
+                                {% endif %}
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </div>

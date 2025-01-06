@@ -11,6 +11,8 @@ urlpatterns = [
     path('toolbar/', include('toolbar.urls')),
     path('likes/', include('likes.urls')),
     path('followers/', include('followers.urls')),
+    path('notifications/', include('notifications.urls')), 
+
 ]
 
 if settings.DEBUG:

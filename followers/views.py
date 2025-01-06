@@ -3,6 +3,8 @@ from django.shortcuts import redirect, get_object_or_404, render
 from django.contrib.auth.decorators import login_required
 from .models import Follow
 from django.contrib.auth import get_user_model
+from notifications.models import Notification
+
 
 User = get_user_model()
 
@@ -20,6 +22,13 @@ def follow_user(request, user_id):
     
     # Create follow relationship
     Follow.objects.create(follower=request.user, followed=user_to_follow)
+
+    # Create a notification for the followed user
+    Notification.objects.create(
+        user=user_to_follow,  # The user who will receive the notification
+        message=f'{request.user.username} started following you.',
+        notification_type='follow'
+    )
     
     return redirect('public_profile', username=user_to_follow.username)
 
