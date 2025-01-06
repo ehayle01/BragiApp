@@ -74,13 +74,23 @@ def profile_view(request):
     # Retrieve posts that the logged-in user has created
     user_posts = Post.objects.filter(author=request.user).order_by('-created_at')
 
+    # Get the count of followers and following for the logged-in user
+    followers_count = Follow.objects.filter(followed=request.user).count()  # Count of people following the user
+    following_count = Follow.objects.filter(follower=request.user).count()  # Count of users the user is following
+
+    # Create links for followers and following list pages
+    followers_url = f"/followers/followers/{request.user.username}/"
+    following_url = f"/followers/following/{request.user.username}/"
+
     return render(request, 'users/profile.html', {
         'user': request.user,
-        'user_profile': user_profile,  # Make sure to pass user_profile to the template
+        'user_profile': user_profile,
         'user_posts': user_posts,
+        'followers_count': followers_count,
+        'following_count': following_count,
+        'followers_url': followers_url,  # Pass the followers list URL
+        'following_url': following_url,  # Pass the following list URL
     })
-
-
 
 @login_required
 def profile_edit_view(request):

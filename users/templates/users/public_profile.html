@@ -36,14 +36,14 @@
                     <span><strong>Followers:</strong> <a href="{% url 'followers_list' username=user.username %}">{{ followers_count }}</a></span> | 
                     <span><strong>Following:</strong> <a href="{% url 'following_list' username=user.username %}">{{ following_count }}</a></span>
                 </div>
-                {% if is_following %}
-                    <a href="{% url 'unfollow_user' user.id %}" class="btn btn-danger">Unfollow</a>
-                {% else %}
-                    <a href="{% url 'follow_user' user.id %}" class="btn btn-primary">Follow</a>
-                {% endif %}
+                    {% if is_following %}
+                        <a href="{% url 'unfollow_user' user.id %}" class="btn btn-danger">Unfollow</a>
+                    {% else %}
+                        <a href="{% url 'follow_user' user.id %}" class="btn btn-primary">Follow</a>
+                    {% endif %}
                 {% else %}
                 <h3>Your Profile</h3>
-            {% endif %}
+                {% endif %}
             
         </div>
         

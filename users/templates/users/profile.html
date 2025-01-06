@@ -27,6 +27,13 @@
                 <p>No profile information available.</p>
             {% endif %}
         </div>
+
+
+        <!-- Display follower/following count -->
+        <div class="follow-stats">
+            <span><strong>Followers:</strong> <a href="{{ followers_url }}">{{ followers_count }}</a></span> |
+            <span><strong>Following:</strong> <a href="{{ following_url }}">{{ following_count }}</a></span>
+        </div>
         
         <!-- Edit Profile Link -->
         <div class="text-center mb-4">
