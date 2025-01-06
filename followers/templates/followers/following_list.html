@@ -1,0 +1,21 @@
+<!-- BragiApp\followers\templates\followers\following_list.html -->
+{% extends "base.html" %}
+{% block content %}
+<h3>{{ user.username }} is Following</h3>
+
+{% if following %}
+    <ul>
+        {% for follow in following %}
+            <li>
+                <a href="{% url 'public_profile' username=follow.followed.username %}">
+                    {{ follow.followed.username }}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>{{ user.username }} is not following anyone yet.</p>
+{% endif %}
+
+
+{% endblock %}

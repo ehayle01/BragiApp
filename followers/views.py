@@ -1,5 +1,5 @@
-# followers/views.py
-from django.shortcuts import redirect, get_object_or_404
+# BragiApp\followers\views.py
+from django.shortcuts import redirect, get_object_or_404, render
 from django.contrib.auth.decorators import login_required
 from .models import Follow
 from django.contrib.auth import get_user_model
@@ -35,3 +35,27 @@ def unfollow_user(request, user_id):
         follow.delete()  # Remove the follow relationship
     
     return redirect('public_profile', username=user_to_unfollow.username)
+
+
+
+def followers_list(request, username):
+    user = get_object_or_404(User, username=username)
+    
+    # Get all users who are following the current user
+    followers = Follow.objects.filter(followed=user).select_related('follower')
+    
+    return render(request, 'followers/followers_list.html', {
+        'user': user,
+        'followers': followers,
+    })
+
+def following_list(request, username):
+    user = get_object_or_404(User, username=username)
+    
+    # Get all users that the current user is following
+    following = Follow.objects.filter(follower=user).select_related('followed')
+    
+    return render(request, 'followers/following_list.html', {
+        'user': user,
+        'following': following,
+    })
