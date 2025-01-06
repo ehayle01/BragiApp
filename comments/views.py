@@ -1,7 +1,8 @@
 # comments/views.py
 
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseForbidden
 from posts.models import Post
 from .models import Comment
 from .forms import CommentForm
@@ -29,3 +30,35 @@ def create_comment(request, post_id, parent_id=None):
         form = CommentForm()
 
     return render(request, 'posts/post_detail.html', {'post': post, 'form': form, 'parent_comment': parent_comment})
+
+@login_required
+def edit_comment(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id)
+    
+    # Ensure the user is the author of the comment
+    if comment.user != request.user:
+        return redirect('post_detail', pk=comment.post.id)  # Or a "Permission Denied" page
+    
+    if request.method == "POST":
+        form = CommentForm(request.POST, instance=comment)
+        if form.is_valid():
+            form.save()
+            return redirect('post_detail', pk=comment.post.id)
+    else:
+        form = CommentForm(instance=comment)
+
+    return render(request, 'comments/edit_comment.html', {'form': form, 'comment': comment})
+
+
+@login_required
+def delete_comment(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id)
+    
+    # Ensure the user is the author of the comment
+    if comment.user != request.user:
+        return HttpResponseForbidden("You are not authorized to delete this comment.")
+
+    post_id = comment.post.id
+    comment.delete()
+    
+    return redirect('post_detail', pk=post_id)
