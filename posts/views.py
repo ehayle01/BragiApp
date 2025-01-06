@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 #from fuzzywuzzy import fuzz
 from django.http import Http404, JsonResponse
+from comments.models import Comment
 
 
 # View for listing posts
@@ -52,9 +53,11 @@ def post_list(request):
 @login_required
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
+    comments = Comment.objects.filter(post=post, parent__isnull=True)
 
     return render(request, 'posts/post_detail.html', {
         'post': post,
+        'comments': comments,  # Passing top-level comments to the template
     })
 
 
