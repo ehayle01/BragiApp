@@ -1,13 +1,51 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Notifications</h2>
-{% for notification in notifications %}
-    <div class="notification">
-        <p>{{ notification.message }} - <em>{{ notification.created_at }}</em></p>
-        {% if not notification.is_read %}
-            <a href="?mark_read={{ notification.id }}">Mark as Read</a>
-        {% endif %}
-    </div>
-{% endfor %}
+<!-- Sticky Header for Back Button -->
+<div class="text-left" style="position: sticky; top: 0; margin: 0; padding: 0; background-color: #ffffff; border-bottom: 1px solid var(--navbar-border-color);">
+    <a href="{% url 'post_list' %}" class="btn">
+        <i class="fa-solid fa-chevron-left"></i>
+    </a>
+</div>
+
+<!-- Notifications Container -->
+<div class="container mt-5" style="padding: 16px 1%;"> 
+    <h3 class="mb-4">Notifications</h3>
+
+    <!-- Loop through Notifications -->
+    {% for notification in notifications %}
+        <div class="notification alert alert-info d-flex justify-content-between align-items-center mb-3" style="border-left: 4px solid #007bff;">
+            
+            <!-- Notification Content -->
+            <div>
+                <p class="mb-1">{{ notification.message }}</p>
+
+                {% if notification.notification_type == 'comment' %}
+                    {% if notification.post %}
+                        <a href="{% url 'post_detail' pk=notification.post.id %}" class="btn btn-link btn-sm text-primary">View Post</a>
+                    {% else %}
+                        <span class="text-muted">No associated post</span>
+                    {% endif %}
+                {% elif notification.notification_type == 'reply' %}
+                    {% if notification.comment %}
+                        <a href="{% url 'post_detail' pk=notification.comment.post.id %}#comment-{{ notification.comment.id }}" class="btn btn-link btn-sm text-primary">View Comment</a>
+                    {% else %}
+                        <span class="text-muted">No associated comment</span>
+                    {% endif %}
+                {% endif %}
+            </div>
+
+            <!-- Notification Timestamp and Mark Read Action -->
+            <div class="text-muted text-end">
+                <small>{{ notification.created_at|date:"F j, Y, g:i a" }}</small>
+
+                {% if not notification.is_read %}
+                    <a href="?mark_read={{ notification.id }}" class="btn btn-sm btn-success ms-3">Mark as Read</a>
+                {% endif %}
+            </div>
+        </div>
+    {% empty %}
+        <div class="alert alert-warning">No notifications yet.</div>
+    {% endfor %}
+</div>
 {% endblock %}

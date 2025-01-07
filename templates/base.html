@@ -20,36 +20,34 @@
         {% if user.is_authenticated %}
         <header>
             <!-- Fixed Top Navbar -->
-             
-            <nav class="navbar fixed-top">
-                
-                <div class="container-fluid d-flex">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top shadow-sm">
+                <div class="container-fluid d-flex justify-content-between align-items-center">
                     <!-- Bragi Homepage Link (Left Aligned) -->
-                    <a class="navbar-brand" href="/">Bragi</a>
-        
+                    <a class="navbar-brand" href="/" style="font-size: 1.2rem;">Bragi</a>
+
                     <!-- Navbar Items (Right Aligned) -->
-                    
                     <div class="d-flex align-items-center">
-                        <!-- Publish Post Link -->
+                        <!-- Publish and Explore Links -->
                         <ul class="navbar-nav d-flex flex-row">
                             <li class="nav-item">
-                                <a href="{% url 'post_create' %}" class="btn btn-outline-dark" style="margin: 0; padding: 1px 8px;">Publish</a>
+                                <a href="{% url 'post_create' %}" class="btn btn-outline-primary btn-sm mx-2">Publish</a>
                             </li>
                             <li class="nav-item">
-                                <a href="/" class="btn btn-outline-dark" style="margin: 0; padding: 1px 8px;">Explore</a>
+                                <a href="/" class="btn btn-outline-secondary btn-sm mx-2">Explore</a>
                             </li>
                         </ul>
-        
+
                         <!-- Profile Dropdown -->
                         <ul class="navbar-nav">
                             <li class="nav-item dropdown">
-                                <a href="#" class="nav-link" id="profileDropdown" role="button" aria-expanded="false">
+                                <a href="#" class="nav-link dropdown-toggle" id="profileDropdown" role="button" aria-expanded="false" data-bs-toggle="dropdown" aria-haspopup="true">
                                     {% if request.user.is_authenticated and request.user.userprofile.profile_picture %}
-                                    <img src="{{ request.user.userprofile.profile_picture.url }}" alt="Profile Picture" class="rounded-circle" style="width: 32px; height: 32px; object-fit: cover;">
+                                        <img src="{{ request.user.userprofile.profile_picture.url }}" alt="Profile Picture" class="rounded-circle" style="width: 32px; height: 32px; object-fit: cover; margin-right: 8px;">
+                                    {% else %}
+                                        <i class="fas fa-user-circle" style="font-size: 1.5rem; color: #495057;"></i>
                                     {% endif %}
-                                    
                                 </a>
-                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown" style="padding: 10px;">
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
                                     <li><a class="dropdown-item" href="{% url 'profile' %}">View Profile</a></li>
                                     <li>
                                         <a class="dropdown-item" href="#" onclick="document.getElementById('logout-form').submit();">Logout</a>
@@ -57,22 +55,29 @@
                                             {% csrf_token %}
                                         </form>
                                     </li>
-                                    <li><!-- Light/Dark Mode Toggle Button -->
-                                            <button id="theme-toggle" class="btn btn-outline-dark">
-                                                <i id="theme-icon" class="fas fa-sun"></i> <!-- Default icon (Light mode) -->
-                                            </button>
-                                    </li>
                                 </ul>
                             </li>
-                            <li>
-                                <a href="{% url 'notifications_list' %}">
-                                Notifications 
-                                {% if request.user.is_authenticated %}
-                                    {% if unread_count > 0 %}
-                                        <span class="notification-count" style="color: red;">({{ unread_count }})</span>
+
+                            <!-- Notifications Item -->
+                            <li class="nav-item d-flex align-items-center mx-2">
+                                <a href="{% url 'notifications_list' %}" class="nav-link d-flex align-items-center justify-content-center" style="color: inherit; text-decoration: none;">
+                                    <!-- Font Awesome Bell Icon with margin -->
+                                    <i class="fas fa-bell" style="font-size: 1.25rem;"></i>
+                                    
+                                    {% if request.user.is_authenticated %}
+                                        {% if unread_count > 0 %}
+                                            <!-- Unread count displayed as a badge -->
+                                            <span class="notification-count badge rounded-pill bg-danger" style="font-size: 0.75rem; padding: 0.2em 0.6em; position: absolute; top: -4px; right: -4px;">
+                                                {{ unread_count }}
+                                            </span>
+                                        {% endif %}
                                     {% endif %}
-                                {% endif %}
                                 </a>
+                            </li>
+                            <li class="nav-item d-flex align-items-center mx-2"><!-- Light/Dark Mode Toggle Button -->
+                                <button id="theme-toggle" class="btn btn-outline-dark btn-sm">
+                                    <i id="theme-icon" class="fas fa-sun"></i> <!-- Default icon (Light mode) -->
+                                </button>
                             </li>
                         </ul>
                     </div>
@@ -80,7 +85,7 @@
             </nav>
         </header>
         {% endif %}
-        
+
 
         <div class="content-wrapper">
             {% if user.is_authenticated %}

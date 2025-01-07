@@ -6,6 +6,8 @@ from django.http import HttpResponseForbidden
 from posts.models import Post
 from .models import Comment
 from .forms import CommentForm
+from django.contrib.auth.models import User
+from notifications.models import Notification
 
 @login_required
 def create_comment(request, post_id, parent_id=None):
@@ -25,11 +27,41 @@ def create_comment(request, post_id, parent_id=None):
             if parent_comment:  # If it's a reply, associate with the parent
                 comment.parent = parent_comment
             comment.save()
+
+            # Create notification message and URL
+            if parent_comment:
+                # Reply to a comment
+                notification_message = f'{request.user.username} replied to your comment.'
+                notification_url = f"/post/{post.id}#comment-{comment.id}"
+
+                # Notify the parent comment's author
+                Notification.objects.create(
+                    user=parent_comment.user,  # Notify the parent comment's author
+                    message=notification_message,
+                    notification_type='reply',
+                    post=post,  # Link notification to post
+                    comment=parent_comment  # Link to the parent comment
+                )
+            else:
+                # New comment on the post
+                notification_message = f'{request.user.username} commented on your post.'
+                notification_url = f"/post/{post.id}"
+
+                # Notify the post's author
+                Notification.objects.create(
+                    user=post.author,  # Notify the post author
+                    message=notification_message,
+                    notification_type='comment',
+                    post=post,  # Link notification to post
+                    comment=comment  # Link notification to the new comment
+                )
+
             return redirect('post_detail', pk=post.id)  # Redirect back to the post detail page
     else:
         form = CommentForm()
 
     return render(request, 'posts/post_detail.html', {'post': post, 'form': form, 'parent_comment': parent_comment})
+
 
 @login_required
 def edit_comment(request, comment_id):

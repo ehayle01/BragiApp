@@ -20,5 +20,7 @@ urlpatterns = [
 
 
     path('likes/', include('likes.urls')),
+
+    path('notifications/', include('notifications.urls')),
     
 ]
