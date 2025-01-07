@@ -53,6 +53,13 @@ def post_list(request):
 @login_required
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
+
+    # Only increment view count if the user has not viewed this post in this session
+    if not request.session.get(f'viewed_post_{post.pk}', False):
+        post.views += 1
+        post.save()
+        request.session[f'viewed_post_{post.pk}'] = True
+
     comments = Comment.objects.filter(post=post, parent__isnull=True)
 
     return render(request, 'posts/post_detail.html', {

@@ -1,19 +1,29 @@
 <!-- BragiApp\followers\templates\followers\followers_list.html -->
 {% extends "base.html" %}
 {% block content %}
-<h3>{{ user.username }}'s Followers</h3>
+<div class="text-left" style="position: sticky; top: 0; margin: 0; padding: 0; background-color: #ffffff; border-bottom: 1px solid var(--navbar-border-color);">
+    <button onclick="window.history.back();" class="btn">
+        <i class="fa-solid fa-chevron-left"></i> Back
+    </button>
+</div>
+<div class="container mt-5">
+    <!-- Page Heading -->
+    <h3 class="mb-4">{{ user.username }}'s Followers</h3>
 
-{% if followers %}
-    <ul>
-        {% for follow in followers %}
-            <li>
-                <a href="{% url 'public_profile' username=follow.follower.username %}">
+    {% if followers %}
+        <!-- Followers List -->
+        <div class="list-group">
+            {% for follow in followers %}
+                <a href="{% url 'public_profile' username=follow.follower.username %}" class="list-group-item list-group-item-action">
                     {{ follow.follower.username }}
                 </a>
-            </li>
-        {% endfor %}
-    </ul>
-{% else %}
-    <p>{{ user.username }} has no followers yet.</p>
-{% endif %}
+            {% endfor %}
+        </div>
+    {% else %}
+        <!-- No Followers Message -->
+        <div class="alert alert-info">
+            {{ user.username }} has no followers yet.
+        </div>
+    {% endif %}
+</div>
 {% endblock %}

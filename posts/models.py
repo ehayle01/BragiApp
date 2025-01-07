@@ -29,6 +29,9 @@ class Post(models.Model):
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name='posts')
     tags = models.ManyToManyField(Tag, related_name='posts', blank=True)
 
+    views = models.IntegerField(default=0)  # To track how many times the post is viewed
+
+
     def likes(self):
         return self.like_set.all()
 
