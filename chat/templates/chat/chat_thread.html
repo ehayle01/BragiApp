@@ -1,10 +1,20 @@
 <!--BragiApp\chat\templates\chat\room.html-->
 {% extends "base.html" %}
+
 {% block content %}
 <div style="padding: 16px 1%;">
     <h1>Chat Thread with {{ other_user.username }}</h1>
-    <textarea id="chat-log" cols="100" rows="20" readonly></textarea><br>
-    <input id="chat-message-input" type="text" size="100" placeholder="Type your message here"><br><br>
+
+    <div id="chat-history" style="height: 400px; overflow-y: auto; border: 1px solid #ccc; padding: 10px;">
+        {% for message in messages %}
+            <div>
+                <strong>{{ message.sender.username }}:</strong> {{ message.content }}
+                <small>{{ message.timestamp|date:"H:i" }}</small>
+            </div>
+        {% endfor %}
+    </div>
+
+    <textarea id="chat-message-input" style="width: 100%;" placeholder="Type your message here"></textarea><br>
     <input id="chat-message-submit" type="button" value="Send">
     {{ thread_id|json_script:"thread-id" }}
 </div>
@@ -22,31 +32,37 @@
 
     chatSocket.onmessage = function(e) {
         const data = JSON.parse(e.data);
-        document.querySelector('#chat-log').value += (data.message + '\n');
-    };
-
-    chatSocket.onclose = function(e) {
-        console.error('Chat socket closed unexpectedly');
+        const chatHistory = document.getElementById('chat-history');
+        chatHistory.innerHTML += `<div><strong>${data.sender}:</strong> ${data.message}</div>`;
+        chatHistory.scrollTop = chatHistory.scrollHeight;  // Scroll to the latest message
     };
 
     document.querySelector('#chat-message-input').focus();
-    document.querySelector('#chat-message-input').onkeyup = function(e) {
-        if (e.key === 'Enter') {
-            document.querySelector('#chat-message-submit').click();
+    document.querySelector('#chat-message-submit').onclick = function() {
+        const messageInput = document.getElementById('chat-message-input');
+        const message = messageInput.value.trim();
+        if (message) {
+            chatSocket.send(JSON.stringify({ 'message': message }));
+            messageInput.value = '';
         }
     };
 
-    document.querySelector('#chat-message-submit').onclick = function(e) {
-        const messageInputDom = document.querySelector('#chat-message-input');
-        const message = messageInputDom.value.trim();
-        if (message) {
-            chatSocket.send(JSON.stringify({
-                'message': message
-            }));
-            messageInputDom.value = '';
-        } else {
-            alert("Message cannot be empty.");
+    // Infinite scrolling logic
+    const chatHistory = document.getElementById('chat-history');
+    let page = 1;  // Current page of messages
+
+    chatHistory.addEventListener('scroll', function() {
+        if (chatHistory.scrollTop === 0) {
+            fetch(`/chat/load_messages/{{ thread_id }}?page=${page + 1}`)
+                .then(response => response.json())
+                .then(data => {
+                    const messages = data.messages;
+                    messages.forEach(msg => {
+                        chatHistory.innerHTML = `<div><strong>${msg.sender}:</strong> ${msg.content}</div>` + chatHistory.innerHTML;
+                    });
+                    page += 1;
+                });
         }
-    };
+    });
 </script>
 {% endblock %}

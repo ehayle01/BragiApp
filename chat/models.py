@@ -1,3 +1,4 @@
+# BragiApp/chat/models.py
 from django.contrib.auth.models import User
 from django.db import models
 
@@ -11,3 +12,13 @@ class ChatThread(models.Model):
 
     def __str__(self):
         return f"Chat between {self.user1.username} and {self.user2.username}"
+
+
+class Message(models.Model):
+    thread = models.ForeignKey(ChatThread, related_name="messages", on_delete=models.CASCADE)
+    sender = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.sender.username}: {self.content[:20]}"
