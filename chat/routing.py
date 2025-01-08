@@ -1,4 +1,4 @@
-# chat/routing.py
+# BragiApp\chat\routing.py
 from django.urls import re_path
 
 from . import consumers

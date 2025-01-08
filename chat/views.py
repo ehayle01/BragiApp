@@ -1,4 +1,4 @@
-# chat/views.py
+# BragiApp\chat\views.py
 from django.shortcuts import render
 
 

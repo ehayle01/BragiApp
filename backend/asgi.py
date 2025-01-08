@@ -1,4 +1,4 @@
-# mysite/asgi.py
+# BragiApp\backend\asgi.py
 import os
 
 from channels.auth import AuthMiddlewareStack
