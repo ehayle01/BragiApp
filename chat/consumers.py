@@ -5,7 +5,6 @@ from channels.db import database_sync_to_async
 from django.contrib.auth.models import User
 from .models import ChatThread, Message
 
-
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.thread_name = self.scope["url_route"]["kwargs"]["thread_name"]
@@ -40,20 +39,41 @@ class ChatConsumer(AsyncWebsocketConsumer):
             await self.close()
             return
 
-        await database_sync_to_async(Message.objects.create)(
+        # Create message and save it
+        message_obj = await database_sync_to_async(Message.objects.create)(
             thread=thread,
             sender=user,
             content=message
         )
 
-        # Send message to thread group
+        # Get the sender's profile picture URL asynchronously
+        sender_profile_picture_url = await database_sync_to_async(self.get_profile_picture_url)(user)
+
+        # Send message to the thread group
         await self.channel_layer.group_send(
-            self.thread_group_name, {"type": "chat.message", "message": message, "sender": user.username}
+            self.thread_group_name, {
+                "type": "chat.message", 
+                "message": message,
+                "sender": user.username,  
+                "sender_profile_picture": sender_profile_picture_url,
+                "timestamp": message_obj.timestamp.strftime("%H:%M")
+            }
         )
+
+    def get_profile_picture_url(self, user):
+        """Helper method to get the profile picture URL synchronously"""
+        return user.userprofile.profile_picture.url if user.userprofile.profile_picture else "/static/img/default_profile_picture.png"
 
     async def chat_message(self, event):
         message = event["message"]
         sender = event["sender"]
+        sender_profile_picture = event["sender_profile_picture"]
+        timestamp = event["timestamp"]
 
         # Send message to WebSocket
-        await self.send(text_data=json.dumps({"message": message, "sender": sender}))
+        await self.send(text_data=json.dumps({
+            "message": message, 
+            "sender": sender, 
+            "sender_profile_picture": sender_profile_picture,
+            "timestamp": timestamp
+        }))

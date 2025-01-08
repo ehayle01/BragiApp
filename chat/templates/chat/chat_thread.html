@@ -1,15 +1,30 @@
-<!--BragiApp\chat\templates\chat\room.html-->
+<!--BragiApp\chat\templates\chat\chat_thread.html-->
 {% extends "base.html" %}
 
 {% block content %}
+<div class="text-left" style="position: sticky; top: 0; margin: 0; padding: 0; background-color: #ffffff; border-bottom: 1px solid var(--navbar-border-color);">
+    <button onclick="window.history.back();" class="btn">
+        <i class="fa-solid fa-chevron-left"></i> Back
+    </button>
+</div>
 <div style="padding: 16px 1%;">
     <h1>Chat Thread with {{ other_user.username }}</h1>
 
     <div id="chat-history" style="height: 400px; overflow-y: auto; border: 1px solid #ccc; padding: 10px;">
         {% for message in messages %}
-            <div>
-                <strong>{{ message.sender.username }}:</strong> {{ message.content }}
-                <small>{{ message.timestamp|date:"H:i" }}</small>
+            <div style="margin-bottom: 10px;">
+                <div style="display: flex; align-items: center;">
+                    <!-- User's profile picture -->
+                    <img src="{{ message.sender.userprofile.profile_picture.url|default:'/static/img/default_profile_picture.png' }}" 
+                         alt="{{ message.sender.username }}'s profile picture" 
+                         style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px;">
+                    
+                    <!-- User's name and message -->
+                    <div>
+                        <strong>{{ message.sender.username }}</strong>: {{ message.content }}
+                        <small>{{ message.timestamp|date:"H:i" }}</small>
+                    </div>
+                </div>
             </div>
         {% endfor %}
     </div>
@@ -33,8 +48,28 @@
     chatSocket.onmessage = function(e) {
         const data = JSON.parse(e.data);
         const chatHistory = document.getElementById('chat-history');
-        chatHistory.innerHTML += `<div><strong>${data.sender}:</strong> ${data.message}</div>`;
-        chatHistory.scrollTop = chatHistory.scrollHeight;  // Scroll to the latest message
+        
+        // Create a new message element with profile picture and message content
+        const messageElement = document.createElement('div');
+        messageElement.style.marginBottom = '10px';
+        
+        const messageContent = `
+            <div style="display: flex; align-items: center;">
+                <img src="${data.sender_profile_picture || '/static/img/default_profile_picture.png'}" 
+                     alt="${data.sender}'s profile picture" 
+                     style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px;">
+                <div>
+                    <strong>${data.sender}</strong>: ${data.message}
+                    <small>${data.timestamp}</small> <!-- Display timestamp -->
+                </div>
+            </div>
+        `;
+        
+        messageElement.innerHTML = messageContent;
+        chatHistory.appendChild(messageElement);
+
+        // Scroll to the latest message
+        chatHistory.scrollTop = chatHistory.scrollHeight;
     };
 
     document.querySelector('#chat-message-input').focus();
@@ -46,23 +81,5 @@
             messageInput.value = '';
         }
     };
-
-    // Infinite scrolling logic
-    const chatHistory = document.getElementById('chat-history');
-    let page = 1;  // Current page of messages
-
-    chatHistory.addEventListener('scroll', function() {
-        if (chatHistory.scrollTop === 0) {
-            fetch(`/chat/load_messages/{{ thread_id }}?page=${page + 1}`)
-                .then(response => response.json())
-                .then(data => {
-                    const messages = data.messages;
-                    messages.forEach(msg => {
-                        chatHistory.innerHTML = `<div><strong>${msg.sender}:</strong> ${msg.content}</div>` + chatHistory.innerHTML;
-                    });
-                    page += 1;
-                });
-        }
-    });
 </script>
 {% endblock %}

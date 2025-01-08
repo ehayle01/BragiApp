@@ -6,6 +6,7 @@ from .models import ChatThread, Message
 from followers.models import Follow  
 from django.core.paginator import Paginator
 from django.http import JsonResponse
+from users.models import UserProfile
 
 
 
@@ -13,6 +14,11 @@ from django.http import JsonResponse
 def communication_center(request):
     # Get the list of users the current user follows
     following = Follow.objects.filter(follower=request.user).select_related('followed')
+
+    # Add profile picture URL for each followed user
+    for follow in following:
+        follow.followed.profile_picture_url = follow.followed.userprofile.profile_picture.url if follow.followed.userprofile.profile_picture else None
+
     return render(request, "chat/communication_center.html", {"following": following})
 
 @login_required
@@ -31,10 +37,14 @@ def chat_thread(request, user_id):
     messages = Message.objects.filter(thread=thread).order_by('-timestamp')[:20]
     messages = reversed(messages)  # Display them in ascending order in the template
 
+     # Get profile picture for the other user
+    other_user_profile_picture = other_user.userprofile.profile_picture.url if other_user.userprofile.profile_picture else None
+
     return render(request, "chat/chat_thread.html", {
         "thread_id": thread.id,
         "other_user": other_user,
-        "messages": messages
+        "messages": messages,
+        "other_user_profile_picture": other_user_profile_picture,
     })
 
 

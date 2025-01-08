@@ -1,18 +1,26 @@
 <!--BragiApp\chat\templates\chat\communication_center.html-->
 {% extends "base.html" %}
 {% block content %}
+<div class="text-left" style="position: sticky; top: 0; margin: 0; padding: 0; background-color: #ffffff; border-bottom: 1px solid var(--navbar-border-color);">
+    <button onclick="window.history.back();" class="btn">
+        <i class="fa-solid fa-chevron-left"></i> Back
+    </button>
+</div>
 <div style="padding: 16px 1%;">
     <h1>Communication Center</h1>
-    <p>Start a chat with users you follow:</p>
-    <ul>
+    <p>Start a chat with your network</p>
+    <ul style="list-style: none;">
         {% for follow in following %}
-            <li>
-                <a href="{% url 'chat_thread' follow.followed.id %}">
-                    {{ follow.followed.username }}
-                </a>
-            </li>
+        <li class="my-3">
+            <a href="{% url 'chat_thread' follow.followed.id %}" style="text-decoration: none; color: black;">
+                <img src="{{ follow.followed.userprofile.profile_picture.url|default:'/static/img/default_profile_picture.png' }}" 
+                     alt="{{ follow.followed.username }}'s profile picture" 
+                     style="width: 40px; height: 40px; border-radius: 50%;">
+                {{ follow.followed.username }}
+            </a>
+        </li>
         {% empty %}
-            <li>You are not following anyone yet!</li>
+        <li>You are not following anyone yet!</li>
         {% endfor %}
     </ul>
 </div>
