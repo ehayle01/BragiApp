@@ -13,6 +13,7 @@ urlpatterns = [
     path('followers/', include('followers.urls')),
     path('notifications/', include('notifications.urls')), 
     path('comments/', include('comments.urls')),
+     path("chat/", include("chat.urls")),
 
 ]
 
