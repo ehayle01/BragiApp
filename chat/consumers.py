@@ -1,34 +1,32 @@
 # BragiApp\chat\consumers.py
 import json
-
 from channels.generic.websocket import AsyncWebsocketConsumer
-
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
-        self.room_group_name = f"chat_{self.room_name}"
+        self.thread_name = self.scope["url_route"]["kwargs"]["thread_name"]
+        self.thread_group_name = f"chat_{self.thread_name}"
 
-        # Join room group
-        await self.channel_layer.group_add(self.room_group_name, self.channel_name)
+        # Join thread group
+        await self.channel_layer.group_add(self.thread_group_name, self.channel_name)
 
         await self.accept()
 
     async def disconnect(self, close_code):
-        # Leave room group
-        await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+        # Leave thread group
+        await self.channel_layer.group_discard(self.thread_group_name, self.channel_name)
 
     # Receive message from WebSocket
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
         message = text_data_json["message"]
 
-        # Send message to room group
+        # Send message to thread group
         await self.channel_layer.group_send(
-            self.room_group_name, {"type": "chat.message", "message": message}
+            self.thread_group_name, {"type": "chat.message", "message": message}
         )
 
-    # Receive message from room group
+    # Receive message from thread group
     async def chat_message(self, event):
         message = event["message"]
 

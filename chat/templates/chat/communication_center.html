@@ -1,0 +1,28 @@
+<!--BragiApp\chat\templates\chat\index.html-->
+{% extends "base.html" %}
+{% block content %}
+<div class="" style="padding: 16px 1%;"> 
+    <h1>Welcome to the Communication Center!</h1>
+    <p>Which chat thread would you like to enter?</p>
+    <input id="thread-name-input" type="text" size="100" placeholder="Enter chat thread name"><br><br>
+    <input id="thread-name-submit" type="button" value="Enter">
+</div>
+
+<script>
+    document.querySelector('#thread-name-input').focus();
+    document.querySelector('#thread-name-input').onkeyup = function(e) {
+        if (e.key === 'Enter') {  // enter, return
+            document.querySelector('#thread-name-submit').click();
+        }
+    };
+
+    document.querySelector('#thread-name-submit').onclick = function(e) {
+        const threadName = document.querySelector('#thread-name-input').value.trim();
+        if (threadName) {
+            window.location.pathname = '/chat/' + threadName + '/';
+        } else {
+            alert("Please enter a valid chat thread name.");
+        }
+    };
+</script>
+{% endblock %}

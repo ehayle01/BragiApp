@@ -1,9 +1,8 @@
 # BragiApp\chat\views.py
 from django.shortcuts import render
 
+def communication_center(request):
+    return render(request, "chat/communication_center.html")
 
-def index(request):
-    return render(request, "chat/index.html")
-
-def room(request, room_name):
-    return render(request, "chat/room.html", {"room_name": room_name})
+def chat_thread(request, thread_name):
+    return render(request, "chat/chat_thread.html", {"thread_name": thread_name})
