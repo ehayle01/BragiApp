@@ -60,7 +60,8 @@ def post_detail(request, pk):
         post.save()
         request.session[f'viewed_post_{post.pk}'] = True
 
-    comments = Comment.objects.filter(post=post, parent__isnull=True)
+    # Ensure comments are ordered by 'created_at' in descending order
+    comments = Comment.objects.filter(post=post, parent__isnull=True).order_by('-created_at')
 
     return render(request, 'posts/post_detail.html', {
         'post': post,

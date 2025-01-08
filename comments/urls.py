@@ -10,4 +10,6 @@ urlpatterns = [
     # New URLs for editing and deleting comments
     path('edit/<int:comment_id>/', views.edit_comment, name='edit_comment'),
     path('delete/<int:comment_id>/', views.delete_comment, name='delete_comment'),
+    path('create_comment/<int:post_id>/<int:parent_id>/', views.create_comment, name='create_comment'),
+
 ]

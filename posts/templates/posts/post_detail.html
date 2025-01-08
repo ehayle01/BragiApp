@@ -76,7 +76,13 @@
             {% for comment in comments %}
                 <div class="border rounded p-3 mb-3">
                     <div class="d-flex justify-content-between">
-                        <strong>{{ comment.user.username }}</strong>
+                        <div class="d-flex align-items-center">
+                            <!-- Display Profile Picture if available -->
+                            {% if comment.user.userprofile.profile_picture %}
+                                <img src="{{ comment.user.userprofile.profile_picture.url }}" alt="{{ comment.user.username }}'s profile" class="rounded-circle" width="30" height="30" style="margin-right: 10px;">
+                            {% endif %}
+                            <strong>{{ comment.user.username }}</strong>
+                        </div>
                         <small class="text-muted">{{ comment.created_at|date:"F j, Y, g:i a" }}</small>
                     </div>
                     <p>{{ comment.content }}</p>
@@ -95,7 +101,13 @@
                             {% for reply in comment.replies.all %}
                                 <div class="border rounded p-3 mb-3">
                                     <div class="d-flex justify-content-between">
-                                        <strong>{{ reply.user.username }}</strong>
+                                        <div class="d-flex align-items-center">
+                                            <!-- Display Profile Picture if available for replies -->
+                                            {% if reply.user.userprofile.profile_picture %}
+                                                <img src="{{ reply.user.userprofile.profile_picture.url }}" alt="{{ reply.user.username }}'s profile" class="rounded-circle" width="30" height="30" style="margin-right: 10px;">
+                                            {% endif %}
+                                            <strong>{{ reply.user.username }}</strong>
+                                        </div>
                                         <small class="text-muted">{{ reply.created_at|date:"F j, Y, g:i a" }}</small>
                                     </div>
                                     <p>{{ reply.content }}</p>

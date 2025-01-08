@@ -366,3 +366,23 @@ button[type="submit"].w-100 {
         font-size: 1rem;
     }
 }
+
+
+
+
+
+
+.comments-container {
+    max-height: 400px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+}
+
+.form-group.fixed-bottom {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: white;
+    padding: 10px;
+    z-index: 10; /* Ensure the form is above other elements */
+}
