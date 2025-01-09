@@ -21,6 +21,7 @@ def communication_center(request):
 
     return render(request, "chat/communication_center.html", {"following": following})
 
+
 @login_required
 def chat_thread(request, user_id):
     other_user = get_object_or_404(User, id=user_id)

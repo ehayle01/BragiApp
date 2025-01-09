@@ -193,29 +193,6 @@ body.dark-mode .container-public-profile-card
 }
 
 
-/* post list card styles */
-.container-post-list{
-    padding: 0;
-    margin: 0;
-}
-
-.container-post-list .container{
-    padding: 0;
-}
-.container-post-list .container .row{
-    padding: 0;
-    margin: 0;
-}
-
-
-
-.post-settings {
-    position: absolute;
-    top: 0;
-    right: 0;
-    padding: 10px;
-}
-
 
 
 /* Badge colors for Category and Tags card styles */
@@ -367,22 +344,3 @@ button[type="submit"].w-100 {
     }
 }
 
-
-
-
-
-
-.comments-container {
-    max-height: 400px;
-    overflow-y: auto;
-    margin-bottom: 20px;
-}
-
-.form-group.fixed-bottom {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    background-color: white;
-    padding: 10px;
-    z-index: 10; /* Ensure the form is above other elements */
-}

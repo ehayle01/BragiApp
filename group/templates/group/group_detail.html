@@ -1,0 +1,14 @@
+<!-- backend/groups/templates/groups/group_detail.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{{ group.name }}</h1>
+    <p>{{ group.description }}</p>
+    <p>Creator: {{ group.creator.username }}</p>
+    <p>Members:</p>
+    <ul>
+        {% for member in group.members.all %}
+            <li>{{ member.username }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

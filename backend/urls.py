@@ -14,6 +14,8 @@ urlpatterns = [
     path('notifications/', include('notifications.urls')), 
     path('comments/', include('comments.urls')),
     path("chat/", include("chat.urls")),
+    path('group/', include('group.urls')),
+    
 
 ]
 

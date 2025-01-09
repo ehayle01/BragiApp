@@ -14,11 +14,11 @@
 
     <!-- Loop through Notifications -->
     {% for notification in notifications %}
-        <div class="notification alert alert-info d-flex justify-content-between align-items-center mb-3" style="border-left: 4px solid #007bff;">
+        <div class=" d-flex justify-content-between" style="padding: 1rem 1rem; border-radius: .25rem; margin-bottom: 1rem; background-color: #FFFBFF; border: 1px solid #C2BFC2;">
             
             <!-- Notification Content -->
             <div>
-                <p class="mb-1">{{ notification.message }}</p>
+                <p>{{ notification.message }}</p>
 
                 {% if notification.notification_type == 'comment' %}
                     {% if notification.post %}
