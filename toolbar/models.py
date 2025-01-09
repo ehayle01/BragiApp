@@ -1,7 +1,7 @@
 # backend/toolbar/models.py
 from django.db import models
 
-class Toolbar(models.Model):  # Separate model for the toolbar's external image
+class ToolbarAd(models.Model):  # Separate model for the toolbar's external image
     name = models.CharField(max_length=100, blank=True, null=True)
     alt_text = models.CharField(max_length=200, blank=True, null=True)  # Alt text for the image
     image = models.ImageField(upload_to='toolbar_images/', blank=True, null=True)  # Image upload field

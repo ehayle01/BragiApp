@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import ToolbarItem, Toolbar
+from .models import ToolbarItem, ToolbarAd
 
 # Inline admin for ToolbarItem, only displaying child items for a parent ToolbarItem
 class ToolbarItemInline(admin.TabularInline):
@@ -26,7 +26,7 @@ class ToolbarItemAdmin(admin.ModelAdmin):
     list_display_links = ('name',)  # Makes the name clickable
     inlines = [ToolbarItemInline]  # Display child ToolbarItems for a given parent in the same form
 
-@admin.register(Toolbar)
-class ToolbarAdmin(admin.ModelAdmin):
+@admin.register(ToolbarAd)
+class ToolbarAdAdmin(admin.ModelAdmin):
     list_display = ('name', 'alt_text', 'url', 'image', 'visible')
     # No inline for ToolbarItem here, only manage the Toolbar itself
