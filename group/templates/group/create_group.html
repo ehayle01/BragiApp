@@ -1,11 +1,25 @@
-<!-- backend/groups/templates/groups/create_group.html -->
 {% extends 'base.html' %}
 
 {% block content %}
     <h1>Create a New Group</h1>
     <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
+        
+        <div>
+            <label for="{{ form.name.id_for_label }}">Group Name:</label>
+            {{ form.name }}
+        </div>
+
+        <div>
+            <label for="{{ form.description.id_for_label }}">Description:</label>
+            {{ form.description }}
+        </div>
+
+        <div>
+            <label for="{{ form.members.id_for_label }}">Members:</label>
+            {{ form.members }}  <!-- Explicitly render the members field -->
+        </div>
+        
         <button type="submit">Create Group</button>
     </form>
 {% endblock %}

@@ -6,8 +6,15 @@ class Group(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField()
     creator = models.ForeignKey(User, on_delete=models.CASCADE)
-    members = models.ManyToManyField(User, related_name='group_members')  # Use a unique related_name
+    members = models.ManyToManyField(User, related_name='group_members')
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        permissions = [
+            ("can_add_group", "Can add a new group"),
+            ("can_edit_group", "Can edit a group"),
+            ("can_delete_group", "Can delete a group"),
+        ]
 
     def __str__(self):
         return self.name

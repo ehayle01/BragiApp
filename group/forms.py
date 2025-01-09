@@ -14,3 +14,15 @@ class GroupCreateForm(forms.ModelForm):
         required=False,
         widget=forms.CheckboxSelectMultiple,
     )
+
+# backend/groups/forms.py
+class GroupForm(forms.ModelForm):
+    class Meta:
+        model = Group
+        fields = ['name', 'description', 'members']
+
+    def clean_members(self):
+        members = self.cleaned_data.get('members')
+        if not members:
+            raise forms.ValidationError("At least one member must be selected.")
+        return members

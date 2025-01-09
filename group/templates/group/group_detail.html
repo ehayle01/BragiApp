@@ -1,14 +1,53 @@
-<!-- backend/groups/templates/groups/group_detail.html -->
 {% extends 'base.html' %}
 
+{% load static %}  <!-- Load the static files -->
+
 {% block content %}
-    <h1>{{ group.name }}</h1>
-    <p>{{ group.description }}</p>
-    <p>Creator: {{ group.creator.username }}</p>
-    <p>Members:</p>
-    <ul>
-        {% for member in group.members.all %}
-            <li>{{ member.username }}</li>
-        {% endfor %}
-    </ul>
+
+<div class="">
+    <div class="text-left" style="position: sticky; top: 0; margin: 0; padding: 0; background-color: #ffffff; border-bottom: 1px solid var(--navbar-border-color);">
+        <button onclick="window.history.back();" class="btn">
+            <i class="fa-solid fa-chevron-left"></i> Back
+        </button>
+    </div>
+    
+    <div class="" style="padding: 16px 1%;"> 
+
+        <h1>{{ group.name }}</h1>
+        <p>{{ group.description }}</p>
+        
+        <!-- Display Creator with clickable username and profile picture -->
+        <p>Creator: 
+            {% if group.creator.userprofile.profile_picture %}
+                <img src="{{ group.creator.userprofile.profile_picture.url }}" alt="Profile Picture" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 5px;">
+            {% else %}
+                <img src="{% static 'default_profile_pic.png' %}" alt="Default Profile Picture" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 5px;">
+            {% endif %}
+            <a href="{% url 'public_profile' username=group.creator.username %}">{{ group.creator.username }}</a>
+        </p>
+    
+        <p>Members:</p>
+        <ul style="list-style: none;">
+            {% if group.members.all %}
+                {% for member in group.members.all %}
+                    <li class="my-2">
+                        {% if member.userprofile.profile_picture %}
+                            <img src="{{ member.userprofile.profile_picture.url }}" alt="Profile Picture" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 5px;">
+                        {% else %}
+                            <img src="{% static 'default_profile_pic.png' %}" alt="Default Profile Picture" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 5px;">
+                        {% endif %}
+                        <a href="{% url 'public_profile' username=member.username %}">{{ member.username }}</a>
+                    </li>
+                {% endfor %}
+            {% else %}
+                <li>No members yet.</li>
+            {% endif %}
+        </ul>
+
+
+
+    </div>
+
+
+    
 {% endblock %}
