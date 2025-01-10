@@ -2,7 +2,14 @@
 {% load static %}
 
 {% block content %}
+<div class="text-left" style="position: sticky; top: 0; margin: 0; padding: 0; background-color: #ffffff; border-bottom: 1px solid var(--navbar-border-color);">
+    <button onclick="window.history.back();" class="btn">
+        <i class="fa-solid fa-chevron-left"></i> Back
+    </button>
+</div>
+<div class="" style="padding: 16px 1%;"> 
     <h1>All Groups</h1>
+
 
     <div class="row">
         {% for group in groups %}
@@ -27,5 +34,8 @@
             </div>
         {% endfor %}
     </div>
+
+</div>
+   
 
 {% endblock %}

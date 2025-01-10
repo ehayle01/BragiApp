@@ -106,31 +106,38 @@
                 <form class="search-form" method="get" action="{% url 'post_list' %}">
                     <input class="form-control" type="search" name="q" placeholder="Search..." aria-label="Search" value="{{ query|default:'' }}">
                 </form>
-                <ul class="list-unstyled">
+                
+                <ul class="">
                     {% for item in toolbar_items %}
-                        {% if not item.parent %}
-                            <li class="has-submenu">
-                                <a href="{{ item.url }}" class="text-decoration-none">
-                                    {{ item.name }}
-                                    <p>{{ item.subtext }}</p>
-                                </a>
-                                
-                                {% if item.children.all %}
-                                <ul class="submenu list-unstyled">
-                                    {% for child in item.children.all %}
-                                    <li><a href="{{ child.url }}">{{ child.name }}</a></li>
-                                    {% endfor %}
-                                </ul>
-                                {% endif %}
-                            </li>
+                        {% if item.visible %}
+                            {% if not item.parent %}
+                                <li class="">
+                                    <a href="{{ item.url }}" class="text-decoration-none">
+                                        {{ item.name }}
+                                        <p>{{ item.subtext }}</p>
+                                    </a>
+                                    
+                                    {% if item.children.all %}
+                                        <ul class="">
+                                            {% for child in item.children.all %}
+                                                <li><a href="{{ child.url }}">{{ child.name }}</a></li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% endif %}
+                                </li>
+                            {% endif %}
                         {% endif %}
                     {% endfor %}
                 </ul>
+                
+                
+                
                 
             </div>
             {% endif %}
 
             <div class="main" style="position: relative; width: 100%; height: 100vh; background: #f0f0f0;">
+                
                 {% block content %}
                 <!-- Page-specific content will go here -->
                 {% endblock %}

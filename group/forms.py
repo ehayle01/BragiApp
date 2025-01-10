@@ -26,3 +26,4 @@ class GroupForm(forms.ModelForm):
         if not members:
             raise forms.ValidationError("At least one member must be selected.")
         return members
+

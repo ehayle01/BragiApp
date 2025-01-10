@@ -43,6 +43,10 @@
                 <li>No members yet.</li>
             {% endif %}
         </ul>
+        {% if group.creator == request.user %}
+        <a href="{% url 'edit_group' group.id %}" class="btn btn-primary">Edit Group</a>
+        {% endif %}
+
 
 
 

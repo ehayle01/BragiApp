@@ -26,10 +26,32 @@ def create_group(request):
     return render(request, 'group/create_group.html', {'form': form})
 
 
+@login_required
 def group_detail(request, group_id):
     group = get_object_or_404(Group, id=group_id)
     return render(request, 'group/group_detail.html', {'group': group})
 
+
+@login_required
 def group_list(request):
     groups = Group.objects.all()  # Retrieve all groups
     return render(request, 'group/group_list.html', {'groups': groups})
+
+
+@login_required
+def edit_group(request, group_id):
+    group = get_object_or_404(Group, id=group_id)
+    
+    # Check if the current user is the creator of the group
+    if group.creator != request.user:
+        return redirect('group_detail', group_id=group.id)  # Redirect to group details if not the creator
+    
+    if request.method == 'POST':
+        form = GroupCreateForm(request.POST, instance=group)
+        if form.is_valid():
+            form.save()  # Save the edited group
+            return redirect('group_detail', group_id=group.id)  # Redirect to the group detail page after editing
+    else:
+        form = GroupCreateForm(instance=group)  # Pre-fill the form with the group's current data
+
+    return render(request, 'group/edit_group.html', {'form': form, 'group': group})
