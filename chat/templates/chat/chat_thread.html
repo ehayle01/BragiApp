@@ -1,5 +1,4 @@
 <!--BragiApp\chat\templates\chat\chat_thread.html-->
-<!-- BragiApp/chat/templates/chat/chat_thread.html -->
 {% extends "base.html" %}
 
 {% block content %}
@@ -15,75 +14,61 @@
         {% for message in messages %}
             <div style="margin-bottom: 10px;">
                 <div style="display: flex; align-items: center;">
-                    <!-- User's profile picture -->
                     <img src="{{ message.sender.userprofile.profile_picture.url|default:'/static/img/default_profile_picture.png' }}" 
                          alt="{{ message.sender.username }}'s profile picture" 
                          style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px;">
-                    
-                    <!-- User's name and message -->
                     <div>
                         <strong>{{ message.sender.username }}</strong>: {{ message.content }}
                         <small>{{ message.timestamp|date:"H:i" }}</small>
+                        {% if message.file %}
+                            <div><a href="{{ message.file.url }}" target="_blank">View File</a></div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
         {% endfor %}
     </div>
 
-    <!-- Typing indicator -->
     <div id="typing-indicator" style="color: gray; font-style: italic;"></div>
 
     <textarea id="chat-message-input" style="width: 100%;" placeholder="Type your message here"></textarea><br>
+    <input type="file" id="chat-file-input" style="width: 100%;" />
     <input id="chat-message-submit" type="button" value="Send">
     {{ thread_id|json_script:"thread-id" }}
 </div>
 
 <script>
     const threadId = JSON.parse(document.getElementById('thread-id').textContent);
-
     const chatSocket = new WebSocket(
-        'ws://'
-        + window.location.host
-        + '/ws/chat/'
-        + threadId
-        + '/'
+        'ws://' + window.location.host + '/ws/chat/' + threadId + '/'
     );
 
-    // Typing indicator
     const typingIndicator = document.getElementById('typing-indicator');
+    const chatHistory = document.getElementById('chat-history');
     let typingTimeout;
     let isTyping = false;
 
     document.querySelector('#chat-message-input').addEventListener("input", () => {
-        // If user is typing, send typing event to server
         if (!isTyping) {
-            chatSocket.send(JSON.stringify({
-                'type': 'typing'
-            }));
+            chatSocket.send(JSON.stringify({ 'type': 'typing' }));
             isTyping = true;
         }
 
-        // Reset the typing timeout
         clearTimeout(typingTimeout);
 
-        // Hide the typing indicator after 2 seconds of inactivity
         typingTimeout = setTimeout(() => {
             isTyping = false;
-            chatSocket.send(JSON.stringify({
-                'type': 'stop_typing'
-            }));
+            chatSocket.send(JSON.stringify({ 'type': 'stop_typing' }));
         }, 2000);
     });
 
     chatSocket.onmessage = function(e) {
         const data = JSON.parse(e.data);
-        const chatHistory = document.getElementById('chat-history');
         
         if (data.type === "message") {
-            // Create a new message element with profile picture and message content
             const messageElement = document.createElement('div');
             messageElement.style.marginBottom = '10px';
-            
+
             const messageContent = `
                 <div style="display: flex; align-items: center;">
                     <img src="${data.sender_profile_picture || '/static/img/default_profile_picture.png'}" 
@@ -91,39 +76,44 @@
                         style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px;">
                     <div>
                         <strong>${data.sender}</strong>: ${data.message}
-                        <small>${data.timestamp}</small> <!-- Display timestamp -->
+                        <small>${data.timestamp}</small>
+                        ${data.file ? `<div><a href="${data.file}" target="_blank">View File</a></div>` : ''}
                     </div>
                 </div>
             `;
             
             messageElement.innerHTML = messageContent;
             chatHistory.appendChild(messageElement);
-
-            // Scroll to the latest message
             chatHistory.scrollTop = chatHistory.scrollHeight;
 
-            // Clear typing indicator if a message is received
             typingIndicator.innerHTML = '';
-
         } else if (data.type === "typing") {
-            // Show typing indicator
             typingIndicator.innerHTML = `${data.sender} is typing...`;
         } else if (data.type === "stop_typing") {
-            // Clear typing indicator when the stop_typing event is received
             typingIndicator.innerHTML = '';
         }
     };
 
-
-
-    document.querySelector('#chat-message-input').focus();
     document.querySelector('#chat-message-submit').onclick = function() {
         const messageInput = document.getElementById('chat-message-input');
+        const fileInput = document.getElementById('chat-file-input');
         const message = messageInput.value.trim();
-        if (message) {
-            chatSocket.send(JSON.stringify({ 'message': message }));
-            messageInput.value = '';
+        const file = fileInput.files[0];
+
+        const data = { 'type': 'message', 'message': message };
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = function() {
+                data.file = reader.result.split(',')[1]; // Base64 encoding
+                chatSocket.send(JSON.stringify(data));
+            };
+            reader.readAsDataURL(file);
+        } else {
+            chatSocket.send(JSON.stringify(data));
         }
+
+        messageInput.value = '';
     };
 </script>
 
