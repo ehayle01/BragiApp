@@ -36,8 +36,11 @@
             <!-- counter list-->
             <div class="col d-flex align-items-center">
                 <ul class="navbar-nav d-flex flex-row m-0" style="font-size: 0.75rem;">
-                    <li class="nav-item">
-                        <p class="m-0">Items: {{ published_posts_count }}</p>
+                    <li class="nav-item mx-2">
+                        <p class="m-0"> <span class="text-secondary" style="font-size: .7rem;">Items:</span> {{ published_posts_count }}</p>
+                    </li>
+                    <li class="nav-item mx-2">
+                        <p class="m-0"> <span class="text-secondary" style="font-size: .7rem;">Groups:</span> {{ group_count }}</p>
                     </li>
                 </ul>
             </div>

@@ -52,7 +52,6 @@ def post_list(request):
     })
 
 
-
 # View for displaying post details
 @login_required
 def post_detail(request, pk):
@@ -102,8 +101,6 @@ def post_create(request):
     return render(request, 'posts/post_form.html', {'form': form})
 
 
-
-
 @login_required
 def post_edit(request, pk):
     post = get_object_or_404(Post, pk=pk)
@@ -136,10 +133,6 @@ def post_edit(request, pk):
         form = PostEditForm(instance=post)
 
     return render(request, 'posts/post_edit.html', {'form': form, 'post': post})
-
-
-
-
 
 
 @login_required
