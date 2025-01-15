@@ -15,6 +15,8 @@ urlpatterns = [
     # URL for editing a post
     path('post/<int:pk>/edit/', views.post_edit, name='post_edit'),
 
+    path('posts/drafts/', views.draft_posts, name='draft_posts'),
+
     # URL for omments 
     path('post/<int:post_id>/comment/', include('comments.urls')),
 

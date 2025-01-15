@@ -1,0 +1,38 @@
+<!-- posts/draft_list.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="text-left" style="position: sticky; top: 0; margin: 0; padding: 0; background-color: #FFFBFF;">
+    <button onclick="window.history.back();" class="btn">
+        <i class="fa-solid fa-chevron-left"></i> Back
+    </button>
+</div>
+        
+ 
+    
+    {% if drafts %}
+        <div class="row" style="padding: 16px 1%;">
+            <h4>Drafts</h4>
+
+            {% for post in drafts %}
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                    <div class="card shadow-sm" style="border-radius: 1rem; overflow: hidden; position: relative;">
+                        <div class="card-body">
+                            <a href="{% url 'post_edit' post.pk %}" class="text-dark text-decoration-none">
+                                <h5 class="card-title">{{ post.title }}</h5>
+                            </a>
+                            <p class="text-muted small">Last updated: {{ post.updated_at|date:"F j, Y" }}</p>
+                            <span class="badge bg-warning">Draft</span>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info text-center">
+            <p>You have no draft posts.</p>
+        </div>
+    {% endif %}
+
+{% endblock %}

@@ -18,19 +18,29 @@ class Tag(models.Model):
         return self.name
 
 class Post(models.Model):
+    DRAFT = 'draft'
+    PUBLISHED = 'published'
+
+    POST_STATUS_CHOICES = [
+        (DRAFT, 'Draft'),
+        (PUBLISHED, 'Published'),
+    ]
+
     title = models.CharField(max_length=255)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts', default=1)  # Adding an author field
-    image = models.ImageField(upload_to='posts/images/', null=True, blank=True)  # Field for image upload (optional)
-    file = models.FileField(upload_to='posts/files/', null=True, blank=True)  # Field for file upload (optional)
-
-    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name='posts')
-    tags = models.ManyToManyField(Tag, related_name='posts', blank=True)
-
-    views = models.IntegerField(default=0)  # To track how many times the post is viewed
-
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts', default=1)
+    image = models.ImageField(upload_to='posts/images/', null=True, blank=True)
+    file = models.FileField(upload_to='posts/files/', null=True, blank=True)
+    category = models.ForeignKey('Category', on_delete=models.SET_NULL, null=True, related_name='posts')
+    tags = models.ManyToManyField('Tag', related_name='posts', blank=True)
+    views = models.IntegerField(default=0)
+    status = models.CharField(
+        max_length=10,
+        choices=POST_STATUS_CHOICES,
+        default=DRAFT,  # Default to draft status
+    )
 
     def likes(self):
         return self.like_set.all()

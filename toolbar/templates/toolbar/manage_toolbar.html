@@ -1,13 +1,44 @@
 <!-- backend\toolbar\templates\toolbar\manage_toolbar.html-->
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
 {% block content %}
+    <h1>Manage Toolbar</h1>
 
-    <h1>Manage Toolbar Items</h1>
+    <!-- Render the external image (ToolbarAd) if available -->
+    {% if toolbar_ad %}
+        {% if toolbar_ad.image %}
+            <div class="toolbar-ad">
+                <a href="{{ toolbar_ad.url }}" target="_blank">
+                    <img src="{{ toolbar_ad.image.url }}" alt="{{ toolbar_ad.alt_text }}" class="img-fluid" style="max-width: 100%; height: auto; object-fit: cover; border-radius: 12px;">
+                </a>
+            </div>
+        {% else %}
+            <p>No toolbar advertisement image available.</p>
+        {% endif %}
+    {% else %}
+        <p>No toolbar advertisement found.</p>
+    {% endif %}
 
-    <ul>
-        {% for item in items %}
-            <li>{{ item.name }} - <a href="{{ item.url }}">{{ item.url }}</a></li>
+    <!-- Render the toolbar items -->
+    <h2>Toolbar Items</h2>
+    <ul class="list-unstyled">
+        {% for item in toolbar_items %}
+            <li>
+                <a href="{{ item.url }}">
+                    <strong>{{ item.name }}</strong>
+                    <p>{{ item.subtext }}</p>
+                </a>
+
+                <!-- Render sub-menu items if they exist -->
+                {% if item.children.exists %}
+                    <ul class="submenu list-unstyled">
+                        {% for child in item.children.all %}
+                            <li><a href="{{ child.url }}">{{ child.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </li>
         {% endfor %}
     </ul>
-    {% endblock %}
+
+{% endblock %}

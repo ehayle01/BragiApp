@@ -17,6 +17,9 @@ def create_group(request):
             # Now, manually save the many-to-many relationship (members)
             members = form.cleaned_data.get('members')  # Get selected members from cleaned data
             group.members.set(members)  # Save members to the group (many-to-many relationship)
+
+            # Add the creator as a member
+            group.members.add(group.creator)  # Add creator to the members list automatically
             
             # Redirect to the group detail page
             return redirect('group_detail', group_id=group.id)
@@ -49,9 +52,21 @@ def edit_group(request, group_id):
     if request.method == 'POST':
         form = GroupCreateForm(request.POST, instance=group)
         if form.is_valid():
-            form.save()  # Save the edited group
+            group = form.save()  # Save the edited group
+
+            # Ensure the creator is still a member after editing (just in case they were removed)
+            group.members.add(group.creator)
+            
             return redirect('group_detail', group_id=group.id)  # Redirect to the group detail page after editing
     else:
         form = GroupCreateForm(instance=group)  # Pre-fill the form with the group's current data
 
     return render(request, 'group/edit_group.html', {'form': form, 'group': group})
+
+
+
+@login_required
+def user_groups(request):
+    # Filter groups by members that contain the current logged-in user
+    groups = Group.objects.filter(members=request.user)
+    return render(request, 'group/user_groups.html', {'groups': groups})

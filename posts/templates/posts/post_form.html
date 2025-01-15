@@ -1,72 +1,74 @@
-<!--BragiApp\posts\templates\posts\post_form.html-->
+<!-- BragiApp\posts\templates\posts\post_form.html -->
 {% extends "base.html" %}
 
 {% block content %}
-<div class="">
-    <div class="text-left" style="position: sticky; top: 0; margin: 0; padding: 0; background-color: #ffffff; border-bottom: 1px solid var(--navbar-border-color);">
-        <button onclick="window.history.back();" class="btn">
-            <i class="fa-solid fa-chevron-left"></i> Back
-        </button>
-    </div>
-    
-    <!-- Form Container -->
-    <div class="container mt-5" style="padding: 16px 1%;">
-        <h4 class="mb-4">Create a New Post</h4>
-        
-        <!-- Form -->
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
 
-            <!-- Post Title -->
-            <div class="mb-4">
-                <label for="id_title" class="form-label">Post Title</label>
-                <div class="mb-2">
-                    {{ form.title }}
-                </div>
-                <div class="form-text text-muted">Give your post a descriptive title.</div>
-            </div>
-
-            <!-- Post Summary -->
-            <div class="mb-4">
-                <label for="id_content" class="form-label">Summary</label>
-                <div class="mb-2">
-                    {{ form.content }}
-                </div>
-                <div class="form-text text-muted">Write a brief summary of your post.</div>
-            </div>
-
-            <!-- Post Category -->
-            <div class="mb-4">
-                <label for="id_category" class="form-label">Category</label>
-                <div class="mb-2">
-                    {{ form.category }}
-                </div>
-                <div class="form-text text-muted">Select the appropriate category for your post.</div>
-            </div>
-
-            <!-- Post Tags -->
-            <div class="mb-4">
-                <label for="id_tags" class="form-label">Tags</label>
-                <div class="mb-2">
-                    {{ form.tags }}
-                </div>
-                <div class="form-text text-muted">Add relevant tags to help others find your post.</div>
-            </div>
-
-            <!-- Post Image -->
-            <div class="mb-4">
-                <label for="id_image" class="form-label">Image</label>
-                <div class="mb-2">
-                    {{ form.image }}
-                </div>
-                <div class="form-text text-muted">Upload an image to accompany your post (optional).</div>
-            </div>
-
-            <!-- Submit Button -->
-            <div>
-                <button type="submit" class="btn btn-dark">Submit</button>
-            </div>
-        </form>
-    </div>
+<div class="text-left" style="position: sticky; top: 0; margin: 0; padding: 0; background-color: #FFFBFF;">
+    <button onclick="window.history.back();" class="btn">
+        <i class="fa-solid fa-chevron-left"></i> Back
+    </button>
 </div>
+
+<!-- Form Container -->
+<div class="container mt-5" style="padding: 16px 1%;">
+    <h4 class="mb-4">Create a New Post</h4>
+    
+    <!-- Form -->
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <!-- Title Field -->
+        <div class="mb-3">
+            <label for="id_title" class="form-label">Title</label>
+            <div>
+                {{ form.title }}
+            </div>
+        </div>
+        
+        <!-- Content Field -->
+        <div class="mb-3">
+            <label for="id_content" class="form-label">Summary</label>
+            <div>
+                {{ form.content }}
+            </div>
+        </div>
+        
+        <!-- Image Field -->
+        <div class="mb-3">
+            <label for="id_image" class="form-label">Image</label>
+            <div>
+                {{ form.image }}
+            </div>
+        </div>
+        
+        <!-- Category Field -->
+        <div class="mb-3">
+            <label for="id_category" class="form-label">Category</label>
+            <div>
+                {{ form.category }}
+            </div>
+        </div>
+        
+        <!-- Tags Field -->
+        <div class="mb-3">
+            <label for="id_tags" class="form-label">Tags</label>
+            <div>
+                {{ form.tags }}
+            </div>
+        </div>
+        
+        <!-- Publish/Save Button -->
+        <div class="mb-3">
+            <button type="submit" name="publish" value="True" class="btn btn-success">Publish</button>
+            <button type="submit" class="btn btn-dark">Save Changes</button>
+        </div>
+    
+        <!-- Cancel Button -->
+        <div class="mt-3">
+            <a href="{% if post.pk %}{% url 'post_detail' pk=post.pk %}{% else %}{% url 'draft_posts' %}{% endif %}" class="btn btn-outline-secondary">Cancel</a>
+        </div>
+    </form>
+    
+</div>
+
 {% endblock %}

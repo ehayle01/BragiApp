@@ -1,32 +1,33 @@
+#BragiApp\toolbar\admin.py
 from django.contrib import admin
-from .models import ToolbarItem, ToolbarAd
-
-# Inline admin for ToolbarItem, only displaying child items for a parent ToolbarItem
-class ToolbarItemInline(admin.TabularInline):
-    model = ToolbarItem
-    extra = 1  # How many empty child items to show by default
-    fields = ('name', 'subtext', 'url', 'order', 'visible')  # Customize which fields to display for the child items
-    fk_name = 'parent'  # We link child items to their parent
-
-    def get_queryset(self, request):
-        """
-        Only show child items (those with a parent) when editing a parent ToolbarItem.
-        """
-        # If we have an instance (we are editing a specific item)
-        if 'object_id' in request.resolver_match.kwargs:
-            parent_id = request.resolver_match.kwargs['object_id']
-            return ToolbarItem.objects.filter(parent_id=parent_id)
-        return ToolbarItem.objects.none()
-
-@admin.register(ToolbarItem)
-class ToolbarItemAdmin(admin.ModelAdmin):
-    list_display = ('name', 'subtext', 'url', 'order', 'visible')
-    list_filter = ('parent',)  # Allows filtering by parent in the admin list
-    search_fields = ('name', 'url')  # Allow searching by name or URL
-    list_display_links = ('name',)  # Makes the name clickable
-    inlines = [ToolbarItemInline]  # Display child ToolbarItems for a given parent in the same form
+from .models import ToolbarItem, ToolbarAd, UserChildItem, UsersItem
 
 @admin.register(ToolbarAd)
 class ToolbarAdAdmin(admin.ModelAdmin):
     list_display = ('name', 'alt_text', 'url', 'image', 'visible')
-    # No inline for ToolbarItem here, only manage the Toolbar itself
+    search_fields = ('name', 'url')  # Search by name or URL
+
+
+@admin.register(ToolbarItem)
+class ToolbarItemAdmin(admin.ModelAdmin):
+    list_display = ('name', 'url', 'order', 'visible')  # Shows name, URL, order, and visibility in the list view
+    search_fields = ('name', 'url')  # Allows searching by name or URL
+    list_display_links = ('name',)  # Makes the name clickable
+
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        return queryset
+
+
+# Inline Model for UserChildItem, displayed inside UsersItem
+class UserChildItemInline(admin.TabularInline):
+    model = UserChildItem
+    extra = 1  # Allows at least one child item by default
+    fields = ('icon', 'name', 'url', 'description', 'visible')  # You can customize which fields are displayed here
+
+@admin.register(UsersItem)
+class UsersItemAdmin(admin.ModelAdmin):
+    inlines = [UserChildItemInline]  # Display UserChildItem inline within UsersItem
+    list_display = ( 'name', 'description', 'visible')
+    search_fields = ('name', 'description')
+    list_display_links = ('name',)

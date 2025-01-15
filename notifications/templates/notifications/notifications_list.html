@@ -2,19 +2,18 @@
 
 {% block content %}
 <!-- Sticky Header for Back Button -->
-<div class="text-left" style="position: sticky; top: 0; margin: 0; padding: 0; background-color: #ffffff; border-bottom: 1px solid var(--navbar-border-color);">
+<div class="text-left" style="position: sticky; top: 0; margin: 0; padding: 0; background-color: #FFFBFF; ">
     <button onclick="window.history.back();" class="btn">
         <i class="fa-solid fa-chevron-left"></i> Back
     </button>
 </div>
-
 <!-- Notifications Container -->
 <div class="container mt-5" style="padding: 16px 1%;"> 
     <h3 class="mb-4">Notifications</h3>
 
     <!-- Loop through Notifications -->
     {% for notification in notifications %}
-        <div class=" d-flex justify-content-between" style="padding: 1rem 1rem; border-radius: .25rem; margin-bottom: 1rem; background-color: #FFFBFF; border: 1px solid #C2BFC2;">
+        <div class=" d-flex justify-content-between" style="padding: .8rem .8rem; border-radius: .25rem; margin-bottom: 1rem; background-color: #FFFBFF; border: 1px solid #C2BFC2;">
             
             <!-- Notification Content -->
             <div>

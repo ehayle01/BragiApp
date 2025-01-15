@@ -1,0 +1,15 @@
+from posts.models import Post  
+from toolbar.models import ToolbarItem, ToolbarAd, UsersItem
+
+def published_posts_count(request):
+    """Return the count of all published posts."""
+    count = Post.objects.filter(status='published').count()
+    return {'published_posts_count': count}
+
+def toolbar_items(request):
+    return {
+        'toolbar_items': ToolbarItem.objects.filter(visible=True),
+        'toolbar_ad': ToolbarAd.objects.filter(visible=True).first(),  
+
+        'toolbar_user_items': UsersItem.objects.filter(visible=True),  # Plural name for consistency
+    }

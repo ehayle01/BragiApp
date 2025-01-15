@@ -17,7 +17,9 @@ def communication_center(request):
 
     # Add profile picture URL for each followed user
     for follow in following:
-        follow.followed.profile_picture_url = follow.followed.userprofile.profile_picture.url if follow.followed.userprofile.profile_picture else None
+        follow.followed.profile_picture_url = (
+            follow.followed.userprofile.profile_picture.url if follow.followed.userprofile.profile_picture else None
+        )
 
     return render(request, "chat/communication_center.html", {"following": following})
 

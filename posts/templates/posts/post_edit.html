@@ -1,31 +1,20 @@
+<!-- BragiApp\posts\templates\posts\post_edit.html -->
+
 {% extends "base.html" %}
 
 {% block title %}Edit Post{% endblock %}
 
 {% block content %}
-<div class="">
+
     <!-- Back Button -->
-    <div class="text-left" style="position: sticky; top: 0; margin: 0; padding: 0; background-color: #ffffff; border-bottom: 1px solid var(--navbar-border-color);">
+    <div class="text-left" style="position: sticky; top: 0; margin: 0; padding: 0; background-color: #FFFBFF;">
         <button onclick="window.history.back();" class="btn">
             <i class="fa-solid fa-chevron-left"></i> Back
         </button>
     </div>
     
     <!-- Form Section -->
-    <div class="" style="padding: 16px 1%;">
-
-        <!-- if error-->
-        {% if form.errors %}
-            <div class="alert alert-danger">
-                <ul>
-                    {% for field in form %}
-                        {% for error in field.errors %}
-                            <li>{{ error }}</li>
-                        {% endfor %}
-                    {% endfor %}
-                </ul>
-            </div>
-        {% endif %}
+    <div class="" style="padding: 16px 1%;">    
 
         <!-- Form start -->
         <form method="post" enctype="multipart/form-data">
@@ -71,13 +60,23 @@
                 </div>
             </div>
             
-            <!-- Submit and Cancel Buttons -->
+            <!-- Toggle Publish Status -->
+<!-- Toggle Publish/Unpublish Button -->
+{% if post.status == 'draft' %}
+    <button type="submit" name="publish" class="btn btn-success">Publish</button>
+{% else %}
+    <button type="submit" name="unpublish" class="btn btn-warning">Unpublish</button>
+{% endif %}
+
+
+            <!-- Submit Button -->
             <button type="submit" class="btn btn-dark">Save Changes</button>
+
             <div class="mt-3">
                 <a href="{% url 'post_detail' pk=post.pk %}" class="btn btn-outline-secondary">Cancel</a>
             </div>
         </form>
         
     </div>
-</div>
+
 {% endblock %}

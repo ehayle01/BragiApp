@@ -14,12 +14,15 @@ from comments.models import Comment
 # View for listing posts
 @login_required
 def post_list(request):
+
+
     query = request.GET.get('q')  # Get the search query from the URL parameter
     category_filter = request.GET.get('category')  # Get the category filter from the URL
     tag_filter = request.GET.get('tag')  # Get the tag filter from the URL
 
-    posts = Post.objects.prefetch_related('like_set').all()
-    
+    # Filter out drafts and only display published posts
+    posts = Post.objects.filter(status='published').prefetch_related('like_set')
+
     # If there is a search query, perform fuzzy search on the title, content, and author
     if query:
         posts = posts.filter(
@@ -49,6 +52,7 @@ def post_list(request):
     })
 
 
+
 # View for displaying post details
 @login_required
 def post_detail(request, pk):
@@ -73,18 +77,30 @@ def post_detail(request, pk):
 @login_required
 def post_create(request):
     if request.method == 'POST':
-        print("POST request received")  # Add this for debugging
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
-            form.instance.author = request.user
-            form.save()
-            print("Form is valid and post saved")
-            return redirect('post_list')
+            post = form.save(commit=False)
+            post.author = request.user  # Set the author before saving
+
+            if 'publish' in request.POST:  # Check if the publish button was clicked
+                post.status = 'published'  # Set post status as published
+            else:
+                post.status = 'draft'  # Otherwise, save as draft
+
+            post.save()
+
+            # Redirect depending on whether the post is published or still a draft
+            if post.status == 'published':
+                return redirect('post_detail', pk=post.pk)  # Redirect to post detail if published
+            else:
+                return redirect('draft_posts')  # Redirect to drafts list if saved as draft
         else:
-            print(form.errors)  # Log form errors if validation fails
+            print(form.errors)  # Log form errors for debugging
     else:
         form = PostForm()
+
     return render(request, 'posts/post_form.html', {'form': form})
+
 
 
 
@@ -99,13 +115,37 @@ def post_edit(request, pk):
     if request.method == 'POST':
         form = PostEditForm(request.POST, request.FILES, instance=post)
         if form.is_valid():
-            form.save()
-            post.refresh_from_db()  # Refresh post to ensure it's updated
-            return redirect('post_detail', pk=post.pk)  # Redirect to the post detail page after saving
+            # Check if the user clicked "Publish" or "Save Changes"
+            post = form.save(commit=False)
+            if 'publish' in request.POST:
+                post.status = 'published'  # Mark as published
+            else:
+                post.status = 'draft'  # Keep as draft
+
+            post.save()  # Save the post with the updated status
+
+            # After saving, redirect to either the post detail or back to drafts
+            if post.status == 'published':
+                return redirect('post_detail', pk=post.pk)  # Redirect to post detail if published
+            else:
+                return redirect('draft_posts')  # Redirect back to draft posts if saved as draft
+
         else:
-            # Log form errors to help with debugging
-            print(form.errors)  # Check the server console for errors
+            print(form.errors)  # Log form errors for debugging
     else:
         form = PostEditForm(instance=post)
 
     return render(request, 'posts/post_edit.html', {'form': form, 'post': post})
+
+
+
+
+
+
+@login_required
+def draft_posts(request):
+    drafts = Post.objects.filter(author=request.user, status='draft')  # Filter drafts for the logged-in user
+    return render(request, 'posts/draft_list.html', {'drafts': drafts})
+
+
+

@@ -79,7 +79,8 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 #
-                'toolbar.context_processors.toolbar_items',
+                'backend.context_processors.toolbar_items',
+                'backend.context_processors.published_posts_count', 
 
             ],
         },
