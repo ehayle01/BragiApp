@@ -8,7 +8,7 @@ from .models import Group
 @login_required
 def create_group(request):
     if request.method == 'POST':
-        form = GroupCreateForm(request.POST)
+        form = GroupCreateForm(request.POST, request.FILES)  # Ensure you include request.FILES here
         if form.is_valid():
             group = form.save(commit=False)  # Create group without saving to DB yet
             group.creator = request.user  # Set the current logged-in user as the creator of the group
@@ -21,12 +21,12 @@ def create_group(request):
             # Add the creator as a member
             group.members.add(group.creator)  # Add creator to the members list automatically
             
-            # Redirect to the group detail page
-            return redirect('group_detail', group_id=group.id)
+            return redirect('group_detail', group_id=group.id)  # Redirect to the group detail page
     else:
         form = GroupCreateForm()
 
     return render(request, 'group/create_group.html', {'form': form})
+
 
 
 @login_required
@@ -50,7 +50,7 @@ def edit_group(request, group_id):
         return redirect('group_detail', group_id=group.id)  # Redirect to group details if not the creator
     
     if request.method == 'POST':
-        form = GroupCreateForm(request.POST, instance=group)
+        form = GroupCreateForm(request.POST, request.FILES, instance=group)  # Include request.FILES here
         if form.is_valid():
             group = form.save()  # Save the edited group
 
@@ -62,6 +62,7 @@ def edit_group(request, group_id):
         form = GroupCreateForm(instance=group)  # Pre-fill the form with the group's current data
 
     return render(request, 'group/edit_group.html', {'form': form, 'group': group})
+
 
 
 

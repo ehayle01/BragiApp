@@ -1,3 +1,4 @@
+<!-- BragiApp\group\templates\group\group_list.html -->
 {% extends 'base.html' %}
 {% load static %}
 
@@ -15,18 +16,28 @@
         {% for group in groups %}
             <div class="col-md-4 mb-4">  <!-- 3 cards per row, adjust 'col-md-4' to your preference -->
                 <div class="card">
-                    <!-- Display a placeholder image or the creator's profile picture -->
-                    {% if group.creator.profile_picture %}
-                        <img src="{{ group.creator.profile_picture.url }}" class="card-img-top" alt="{{ group.name }} creator's picture">
+                    <!-- Display cover image -->
+                    {% if group.cover_image %}
+                    <img src="{{ group.cover_image.url }}" alt="Group Cover Image" class="img-fluid mb-3">
                     {% else %}
-                        <img src="{% static 'default_group_image.png' %}" class="card-img-top" alt="Default Group Image">
+                        <p>No cover image available.</p>
                     {% endif %}
                     
                     <div class="card-body">
                         <h5 class="card-title">{{ group.name }}</h5>
                         <p class="card-text">{{ group.description|truncatewords:15 }}</p>
                         <p class="card-text">
-                            <small class="text-muted">Creator: <a href="{% url 'public_profile' group.creator.username %}">{{ group.creator.username }}</a></small>
+                            <small class="text-muted">Creator: 
+                               
+                                <a href="{% url 'public_profile' username=group.creator.username %}">
+                                    {% if group.creator.userprofile.profile_picture %}
+                                        <img src="{{ group.creator.userprofile.profile_picture.url }}" alt="Profile Picture" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 5px;">
+                                    {% else %}
+                                        <img src="{% static 'default_profile_pic.png' %}" alt="Default Profile Picture" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 5px;">
+                                    {% endif %}
+                                    {{ group.creator.username }}
+                                </a>
+                            </small>
                         </p>
                         <a href="{% url 'group_detail' group.id %}" class="btn btn-primary">View Group</a>
                     </div>

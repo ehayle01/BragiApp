@@ -11,7 +11,7 @@
     <h1>Edit Group: {{ group.name }}</h1>
     
     {% if user == group.creator %}
-        <form method="post">
+        <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.as_p }}
             <button type="submit">Save Changes</button>

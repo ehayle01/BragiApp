@@ -1,3 +1,4 @@
+<!-- BragiApp\group\templates\group\create_group.html -->
 {% extends 'base.html' %}
 
 {% block content %}
@@ -8,23 +9,10 @@
 </div>
 <div class="" style="padding: 16px 1%;"> 
     <h1>Create a New Group</h1>
-    <form method="post">
+    <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         
-        <div>
-            <label for="{{ form.name.id_for_label }}">Group Name:</label>
-            {{ form.name }}
-        </div>
-
-        <div>
-            <label for="{{ form.description.id_for_label }}">Description:</label>
-            {{ form.description }}
-        </div>
-
-        <div>
-            <label for="{{ form.members.id_for_label }}">Members:</label>
-            {{ form.members }}  <!-- Explicitly render the members field -->
-        </div>
+        {{ form.as_p }}
         
         <button type="submit">Create Group</button>
     </form>

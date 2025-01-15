@@ -9,6 +9,10 @@ class Group(models.Model):
     members = models.ManyToManyField(User, related_name='group_members')
     created_at = models.DateTimeField(auto_now_add=True)
 
+    # New fields:
+    cover_image = models.ImageField(upload_to='group_cover_images/', null=True, blank=True)
+    location = models.CharField(max_length=255, null=True, blank=True)
+
     class Meta:
         permissions = [
             ("can_add_group", "Can add a new group"),

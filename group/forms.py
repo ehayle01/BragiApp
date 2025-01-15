@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 class GroupCreateForm(forms.ModelForm):
     class Meta:
         model = Group
-        fields = ['name', 'description']
+        fields = ['name', 'description', 'cover_image', 'location']  # Correct fields
 
     # Optional: Add a custom method to add members in the form if needed
     members = forms.ModelMultipleChoiceField(
@@ -15,11 +15,11 @@ class GroupCreateForm(forms.ModelForm):
         widget=forms.CheckboxSelectMultiple,
     )
 
-# backend/groups/forms.py
+
 class GroupForm(forms.ModelForm):
     class Meta:
         model = Group
-        fields = ['name', 'description', 'members']
+        fields = ['name', 'description', 'cover_image', 'location', 'members']
 
     def clean_members(self):
         members = self.cleaned_data.get('members')

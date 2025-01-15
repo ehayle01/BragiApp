@@ -1,3 +1,4 @@
+<!-- BragiApp\group\templates\group\group_detail.html -->
 {% extends 'base.html' %}
 
 {% load static %}  <!-- Load the static files -->
@@ -15,15 +16,31 @@
 
         <h1>{{ group.name }}</h1>
         <p>{{ group.description }}</p>
+
+            <!-- Display cover image -->
+            {% if group.cover_image %}
+            <img src="{{ group.cover_image.url }}" alt="Group Cover Image" class="img-fluid mb-3">
+            {% else %}
+                <p>No cover image available.</p>
+            {% endif %}
+
+        <!-- Display location -->
+        {% if group.location %}
+            <p><strong>Location:</strong> {{ group.location }}</p>
+        {% else %}
+            <p>No location provided.</p>
+        {% endif %}
         
         <!-- Display Creator with clickable username and profile picture -->
         <p>Creator: 
-            {% if group.creator.userprofile.profile_picture %}
-                <img src="{{ group.creator.userprofile.profile_picture.url }}" alt="Profile Picture" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 5px;">
-            {% else %}
-                <img src="{% static 'default_profile_pic.png' %}" alt="Default Profile Picture" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 5px;">
-            {% endif %}
-            <a href="{% url 'public_profile' username=group.creator.username %}">{{ group.creator.username }}</a>
+            <a href="{% url 'public_profile' username=group.creator.username %}">
+                {% if group.creator.userprofile.profile_picture %}
+                    <img src="{{ group.creator.userprofile.profile_picture.url }}" alt="Profile Picture" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 5px;">
+                {% else %}
+                    <img src="{% static 'default_profile_pic.png' %}" alt="Default Profile Picture" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 5px;">
+                {% endif %}
+                {{ group.creator.username }}
+            </a>
         </p>
     
         <p>Members:</p>
@@ -31,12 +48,14 @@
             {% if group.members.all %}
                 {% for member in group.members.all %}
                     <li class="my-2">
-                        {% if member.userprofile.profile_picture %}
-                            <img src="{{ member.userprofile.profile_picture.url }}" alt="Profile Picture" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 5px;">
-                        {% else %}
-                            <img src="{% static 'default_profile_pic.png' %}" alt="Default Profile Picture" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 5px;">
-                        {% endif %}
-                        <a href="{% url 'public_profile' username=member.username %}">{{ member.username }}</a>
+                        <a href="{% url 'public_profile' username=member.username %}">
+                            {% if member.userprofile.profile_picture %}
+                                <img src="{{ member.userprofile.profile_picture.url }}" alt="Profile Picture" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 5px;">
+                            {% else %}
+                                <img src="{% static 'default_profile_pic.png' %}" alt="Default Profile Picture" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 5px;">
+                            {% endif %}
+                            {{ member.username }}
+                        </a>
                     </li>
                 {% endfor %}
             {% else %}
