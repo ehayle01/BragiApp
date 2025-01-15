@@ -2,6 +2,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 
+
 class ChatThread(models.Model):
     user1 = models.ForeignKey(User, related_name='thread_user1', on_delete=models.CASCADE)
     user2 = models.ForeignKey(User, related_name='thread_user2', on_delete=models.CASCADE)

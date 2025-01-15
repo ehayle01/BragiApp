@@ -69,13 +69,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 message_obj.file = file
                 await database_sync_to_async(message_obj.save)()
 
+            file_url = message_obj.file.url if message_obj.file else None
+
             # Send message to the thread group
             await self.channel_layer.group_send(
                 self.thread_group_name,
                 {
                     "type": "chat.message",
                     "message": message,
-                    "file": message_obj.file.url if message_obj.file else None,
+                    "file": file_url,
                     "sender": user.username,
                     "sender_profile_picture": await database_sync_to_async(self.get_profile_picture_url)(user),
                     "timestamp": message_obj.timestamp.strftime("%H:%M")

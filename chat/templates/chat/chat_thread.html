@@ -1,4 +1,3 @@
-<!--BragiApp\chat\templates\chat\chat_thread.html-->
 {% extends "base.html" %}
 
 {% block content %}
@@ -21,7 +20,12 @@
                         <strong>{{ message.sender.username }}</strong>: {{ message.content }}
                         <small>{{ message.timestamp|date:"H:i" }}</small>
                         {% if message.file %}
-                            <div><a href="{{ message.file.url }}" target="_blank">View File</a></div>
+                            <div>
+                                <img src="{{ message.file.url }}" 
+                                     alt="File Thumbnail" 
+                                     style="width: 100px; height: auto; cursor: pointer;" 
+                                     onclick="openFileModal('{{ message.file.url }}')">
+                            </div>
                         {% endif %}
                     </div>
                 </div>
@@ -37,6 +41,16 @@
     {{ thread_id|json_script:"thread-id" }}
 </div>
 
+<!-- Modal to display the file -->
+<div id="file-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeFileModal()">&times;</span>
+        <div id="file-modal-body">
+            <!-- Content will be dynamically inserted here -->
+        </div>
+    </div>
+</div>
+
 <script>
     const threadId = JSON.parse(document.getElementById('thread-id').textContent);
     const chatSocket = new WebSocket(
@@ -47,6 +61,11 @@
     const chatHistory = document.getElementById('chat-history');
     let typingTimeout;
     let isTyping = false;
+
+    // Scroll to the bottom when the page loads
+    window.onload = () => {
+        chatHistory.scrollTop = chatHistory.scrollHeight;
+    };
 
     document.querySelector('#chat-message-input').addEventListener("input", () => {
         if (!isTyping) {
@@ -64,7 +83,7 @@
 
     chatSocket.onmessage = function(e) {
         const data = JSON.parse(e.data);
-        
+
         if (data.type === "message") {
             const messageElement = document.createElement('div');
             messageElement.style.marginBottom = '10px';
@@ -77,13 +96,15 @@
                     <div>
                         <strong>${data.sender}</strong>: ${data.message}
                         <small>${data.timestamp}</small>
-                        ${data.file ? `<div><a href="${data.file}" target="_blank">View File</a></div>` : ''}
+                        ${data.file ? `<div><img src="${data.file}" alt="File Thumbnail" style="width: 100px; height: auto; cursor: pointer;" onclick="openFileModal('${data.file}')"></div>` : ''}
                     </div>
                 </div>
             `;
             
             messageElement.innerHTML = messageContent;
             chatHistory.appendChild(messageElement);
+            
+            // Scroll to the bottom after adding the new message
             chatHistory.scrollTop = chatHistory.scrollHeight;
 
             typingIndicator.innerHTML = '';
@@ -100,21 +121,46 @@
         const message = messageInput.value.trim();
         const file = fileInput.files[0];
 
-        const data = { 'type': 'message', 'message': message };
+        const data = {
+            'type': 'message',
+            'message': message
+        };
 
         if (file) {
             const reader = new FileReader();
-            reader.onloadend = function() {
-                data.file = reader.result.split(',')[1]; // Base64 encoding
+            reader.onload = function(event) {
+                data.file = event.target.result.split(',')[1];  // base64 encoding without data URL scheme
                 chatSocket.send(JSON.stringify(data));
             };
             reader.readAsDataURL(file);
-        } else {
+        } else if (message) {
             chatSocket.send(JSON.stringify(data));
         }
 
         messageInput.value = '';
+        fileInput.value = '';
     };
+
+    function openFileModal(fileUrl) {
+        const modal = document.getElementById('file-modal');
+        const modalBody = document.getElementById('file-modal-body');
+        const fileExtension = fileUrl.split('.').pop().toLowerCase();
+
+        if (fileExtension === 'jpg' || fileExtension === 'jpeg' || fileExtension === 'png' || fileExtension === 'gif') {
+            // For image files
+            modalBody.innerHTML = `<img src="${fileUrl}" style="max-width: 100%; max-height: 400px;">`;
+        } else {
+            // For other files (e.g., PDF, Word)
+            modalBody.innerHTML = `<a href="${fileUrl}" download>Download File</a>`;
+        }
+
+        modal.style.display = 'block';
+    }
+
+    function closeFileModal() {
+        const modal = document.getElementById('file-modal');
+        modal.style.display = 'none';
+    }
 </script>
 
 {% endblock %}
