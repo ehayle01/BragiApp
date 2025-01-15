@@ -7,9 +7,17 @@
     </button>
 </div>
 <div style="padding: 16px 1%;">
-    <h1>Chat Thread with {{ other_user.username }}</h1>
+    <h4>
+       
+        
+        <img src="{{ other_user.userprofile.profile_picture.url|default:'/static/img/default_profile_picture.png' }}" 
+        alt="{{ other_user.username }}'s profile picture" 
+        style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px;">
+        {{ other_user.username }}
+    </h4>
+    
 
-    <div id="chat-history" style="height: 400px; overflow-y: auto; border: 1px solid #ccc; padding: 10px;">
+    <div id="chat-history" style="height: 400px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; background-color: white;">
         {% for message in messages %}
             <div style="margin-bottom: 10px;">
                 <div style="display: flex; align-items: center;">
@@ -43,11 +51,10 @@
 
 <!-- Modal to display the file -->
 <div id="file-modal" class="modal" style="display: none;">
-    <div class="modal-content">
-        <span class="close-btn" onclick="closeFileModal()">&times;</span>
-        <div id="file-modal-body">
-            <!-- Content will be dynamically inserted here -->
-        </div>
+    <div class="modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.25); z-index: 1000;"></div>
+    <div class="modal-content" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 30%; height: 30%; background-color: white; padding: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); overflow: auto; z-index: 1001;">
+        <span class="close-btn" onclick="closeFileModal()" style="position: absolute; top: 10px; right: 10px; cursor: pointer; font-size: 20px;">&times;</span>
+        <div id="file-modal-body" style="text-align: center; overflow: auto; max-height: 80%;"></div>
     </div>
 </div>
 
@@ -146,14 +153,33 @@
         const modalBody = document.getElementById('file-modal-body');
         const fileExtension = fileUrl.split('.').pop().toLowerCase();
 
+        let content = '';
+
         if (fileExtension === 'jpg' || fileExtension === 'jpeg' || fileExtension === 'png' || fileExtension === 'gif') {
             // For image files
-            modalBody.innerHTML = `<img src="${fileUrl}" style="max-width: 100%; max-height: 400px;">`;
+            content = `<img src="${fileUrl}" style="max-width: 100%; max-height: 80vh; object-fit: contain;">`;
+        } else if (fileExtension === 'mp4' || fileExtension === 'mov' || fileExtension === 'webm') {
+            // For video files
+            content = `
+                <video controls style="max-width: 100%; max-height: 80vh;">
+                    <source src="${fileUrl}" type="video/${fileExtension}">
+                    Your browser does not support the video tag.
+                </video>
+            `;
+        } else if (fileExtension === 'mp3' || fileExtension === 'wav' || fileExtension === 'ogg') {
+            // For audio files
+            content = `
+                <audio controls style="width: 100%;">
+                    <source src="${fileUrl}" type="audio/${fileExtension}">
+                    Your browser does not support the audio element.
+                </audio>
+            `;
         } else {
-            // For other files (e.g., PDF, Word)
-            modalBody.innerHTML = `<a href="${fileUrl}" download>Download File</a>`;
+            // For other files (e.g., PDFs, Word files)
+            content = `<a href="${fileUrl}" download>Download File</a>`;
         }
 
+        modalBody.innerHTML = content;
         modal.style.display = 'block';
     }
 
