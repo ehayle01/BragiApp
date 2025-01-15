@@ -7,6 +7,7 @@ from followers.models import Follow
 from django.core.paginator import Paginator
 from django.http import JsonResponse
 from users.models import UserProfile
+from django.db.models import Q
 
 
 
@@ -66,3 +67,21 @@ def load_messages(request, thread_id):
     ]
 
     return JsonResponse({"messages": messages_data})
+
+
+
+@login_required
+def search_messages(request, thread_id):
+    query = request.GET.get("query", "").strip()
+    thread = get_object_or_404(ChatThread, id=thread_id)
+
+    messages = Message.objects.filter(
+        thread=thread, content__icontains=query
+    ).order_by("-timestamp")
+
+    return JsonResponse({
+        "messages": [
+            {"sender": msg.sender.username, "content": msg.content, "timestamp": msg.timestamp.strftime("%H:%M")}
+            for msg in messages
+        ]
+    })

@@ -1,4 +1,5 @@
 <!--BragiApp\chat\templates\chat\chat_thread.html-->
+<!-- BragiApp/chat/templates/chat/chat_thread.html -->
 {% extends "base.html" %}
 
 {% block content %}
@@ -29,6 +30,9 @@
         {% endfor %}
     </div>
 
+    <!-- Typing indicator -->
+    <div id="typing-indicator" style="color: gray; font-style: italic;"></div>
+
     <textarea id="chat-message-input" style="width: 100%;" placeholder="Type your message here"></textarea><br>
     <input id="chat-message-submit" type="button" value="Send">
     {{ thread_id|json_script:"thread-id" }}
@@ -45,32 +49,72 @@
         + '/'
     );
 
+    // Typing indicator
+    const typingIndicator = document.getElementById('typing-indicator');
+    let typingTimeout;
+    let isTyping = false;
+
+    document.querySelector('#chat-message-input').addEventListener("input", () => {
+        // If user is typing, send typing event to server
+        if (!isTyping) {
+            chatSocket.send(JSON.stringify({
+                'type': 'typing'
+            }));
+            isTyping = true;
+        }
+
+        // Reset the typing timeout
+        clearTimeout(typingTimeout);
+
+        // Hide the typing indicator after 2 seconds of inactivity
+        typingTimeout = setTimeout(() => {
+            isTyping = false;
+            chatSocket.send(JSON.stringify({
+                'type': 'stop_typing'
+            }));
+        }, 2000);
+    });
+
     chatSocket.onmessage = function(e) {
         const data = JSON.parse(e.data);
         const chatHistory = document.getElementById('chat-history');
         
-        // Create a new message element with profile picture and message content
-        const messageElement = document.createElement('div');
-        messageElement.style.marginBottom = '10px';
-        
-        const messageContent = `
-            <div style="display: flex; align-items: center;">
-                <img src="${data.sender_profile_picture || '/static/img/default_profile_picture.png'}" 
-                     alt="${data.sender}'s profile picture" 
-                     style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px;">
-                <div>
-                    <strong>${data.sender}</strong>: ${data.message}
-                    <small>${data.timestamp}</small> <!-- Display timestamp -->
+        if (data.type === "message") {
+            // Create a new message element with profile picture and message content
+            const messageElement = document.createElement('div');
+            messageElement.style.marginBottom = '10px';
+            
+            const messageContent = `
+                <div style="display: flex; align-items: center;">
+                    <img src="${data.sender_profile_picture || '/static/img/default_profile_picture.png'}" 
+                        alt="${data.sender}'s profile picture" 
+                        style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px;">
+                    <div>
+                        <strong>${data.sender}</strong>: ${data.message}
+                        <small>${data.timestamp}</small> <!-- Display timestamp -->
+                    </div>
                 </div>
-            </div>
-        `;
-        
-        messageElement.innerHTML = messageContent;
-        chatHistory.appendChild(messageElement);
+            `;
+            
+            messageElement.innerHTML = messageContent;
+            chatHistory.appendChild(messageElement);
 
-        // Scroll to the latest message
-        chatHistory.scrollTop = chatHistory.scrollHeight;
+            // Scroll to the latest message
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+
+            // Clear typing indicator if a message is received
+            typingIndicator.innerHTML = '';
+
+        } else if (data.type === "typing") {
+            // Show typing indicator
+            typingIndicator.innerHTML = `${data.sender} is typing...`;
+        } else if (data.type === "stop_typing") {
+            // Clear typing indicator when the stop_typing event is received
+            typingIndicator.innerHTML = '';
+        }
     };
+
+
 
     document.querySelector('#chat-message-input').focus();
     document.querySelector('#chat-message-submit').onclick = function() {
@@ -82,4 +126,5 @@
         }
     };
 </script>
+
 {% endblock %}
