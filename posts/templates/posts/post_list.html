@@ -1,5 +1,8 @@
 <!-- backend\posts\templates\posts\post_list.html-->
+
 {% extends "base.html" %}
+{% load static %}
+
 
 {% block content %}
 <div class="container py-4" >
@@ -48,14 +51,35 @@
                             <h5 class="card-title">{{ post.title }}</h5>
                         </a>
                         
-                        <!-- Author with Profile Picture -->
+                         <!-- Author with Profile Picture -->
                         <div class="d-flex align-items-center mt-2">
-                            {% if post.author.userprofile.profile_picture %}
-                                <img src="{{ post.author.userprofile.profile_picture.url }}" alt="{{ post.author.username }}" class="rounded-circle me-2" width="30" height="30">
+                            {% if post.maverick %}
+                                <!-- If the post has a Maverick -->
+                                {% if post.maverick.profile_picture %}
+                                    <img src="{{ post.maverick.profile_picture.url }}" alt="{{ post.maverick.name }}" class="rounded-circle me-2" width="30" height="30">
+                                {% else %}
+                                    <img src="{% static 'default_profile_pic.png' %}" alt="Default Profile Picture" class="rounded-circle me-2" width="30" height="30">
+                                {% endif %}
+                                
+                                <!-- Check if Maverick has a valid id before generating the link -->
+                                {% if post.maverick.id %}
+                                    <a href="{% url 'maverick_profile' post.maverick.id %}" class="text-muted small">
+                                        {{ post.maverick.name }}
+                                    </a>
+                                {% else %}
+                                    <span class="text-muted small">{{ post.maverick.name }}</span>
+                                {% endif %}
+                            {% else %}
+                                <!-- If the post came from the main user -->
+                                {% if post.author.userprofile.profile_picture %}
+                                    <img src="{{ post.author.userprofile.profile_picture.url }}" alt="{{ post.author.username }}" class="rounded-circle me-2" width="30" height="30">
+                                {% else %}
+                                    <img src="{% static 'default_profile_pic.png' %}" alt="Default Profile Picture" class="rounded-circle me-2" width="30" height="30">
+                                {% endif %}
+                                <a href="{% url 'public_profile' username=post.author.username %}" class="text-muted small">
+                                    {{ post.author.username }}
+                                </a>
                             {% endif %}
-                            <a href="{% url 'public_profile' username=post.author.username %}" class="text-muted small">
-                                {{ post.author.username }}
-                            </a>
                         </div>
 
                         <p class="text-muted small mb-1">{{ post.created_at|date:"F j, Y" }}</p>

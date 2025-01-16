@@ -1,0 +1,56 @@
+<!-- BragiApp\maverick\templates\maverick\list_mavericks.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+    
+
+<div class="text-left" style="position: sticky; top: 0; margin: 0; padding: 0; background-color: #FFFBFF;">
+    <button onclick="window.history.back();" class="btn">
+        <i class="fa-solid fa-chevron-left"></i> Back
+    </button>
+</div>
+
+<div class="container" style="padding: 16px 1%;"> 
+    <h4>My Mavericks</h4>
+    <div class="row">
+        {% if mavericks %}
+            {% for maverick in mavericks %}
+                <div class="col-md-4 mb-4"> <!-- 3 cards per row, adjust 'col-md-4' as needed -->
+                    <div class="card">
+
+                        <!-- Display profile image -->
+                        {% if maverick.profile_picture %}
+                            <img src="{{ maverick.profile_picture.url }}" alt="{{ maverick.name }}" class="img-fluid mb-3">
+                        {% else %}
+                            <p>No profile picture</p>
+                        {% endif %}
+                        
+                        <div class="card-body">
+                            <h5 class="card-title">{{ maverick.name }}</h5>
+                            <p class="card-text">{{ maverick.bio|truncatewords:15 }}</p>
+                            <p class="card-text"><strong>Location:</strong> {{ maverick.location }}</p>
+                            <a href="{% url 'maverick_profile' id=maverick.id %}" class="btn btn-primary">View Profile</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <p class="alert alert-warning">You don't have any Mavericks yet. Create one now!</p>
+            </div>
+        {% endif %}
+
+        <!-- Create Maverick Card (last in line) -->
+        <div class="col-md-4 mb-4">
+            <div class="card" style="height: 100%;">
+                <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                    <h5 class="card-title">Create New Maverick</h5>
+                    <p class="card-text text-center">Click here to create a new Maverick.</p>
+                    <a href="{% url 'create_maverick' %}" class="btn btn-success">Create New Maverick</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

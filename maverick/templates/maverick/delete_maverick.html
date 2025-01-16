@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Are you sure you want to delete this Maverick? All Posts under <span class="bold">{{ maverick.name }}</span> will be lost.</h1>
+
+    <p>Name: {{ maverick.name }}</p>
+    <p>Bio: {{ maverick.bio }}</p>
+    <p>Location: {{ maverick.location }}</p>
+
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Yes, delete it</button>
+    </form>
+    <a href="{% url 'maverick_profile' id=maverick.id %}" class="btn btn-secondary">Cancel</a>
+{% endblock %}

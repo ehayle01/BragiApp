@@ -18,6 +18,15 @@
     {{ form.as_p }}
     <button type="submit">Save Changes</button>
   </form>
+
+
+
+      <!-- Link to the delete confirmation page -->
+      <a href="{% url 'delete_maverick' id=maverick.id %}" class="btn btn-danger" style="margin-top: 20px;">
+        Delete Maverick
+    </a>
+
+
 </div>
 
 
