@@ -1,0 +1,24 @@
+<!-- templates/maverick/create_maverick.html -->
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="text-left" style="position: sticky; top: 0; margin: 0; padding: 0; background-color: #FFFBFF;">
+  <button onclick="window.history.back();" class="btn">
+      <i class="fa-solid fa-chevron-left"></i> Back
+  </button>
+</div>
+
+<!-- Form Container -->
+<div class="container mt-5" style="padding: 16px 1%;">
+  <h4>Create a New Maverick</h4>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Create Maverick</button>
+  </form>
+<div>
+
+
+
+
+{% endblock %}

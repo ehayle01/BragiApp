@@ -2,6 +2,8 @@
 from django.db import models
 from django.contrib.auth.models import User  # Assuming you are using Django's built-in User model
 from django.utils import timezone
+from maverick.models import Maverick  # Import the Maverick model
+
 
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -31,6 +33,10 @@ class Post(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts', default=1)
+
+    maverick = models.ForeignKey(Maverick, on_delete=models.SET_NULL, null=True, blank=True, related_name='posts')  # Optional Maverick field
+
+    
     image = models.ImageField(upload_to='posts/images/', null=True, blank=True)
     file = models.FileField(upload_to='posts/files/', null=True, blank=True)
     category = models.ForeignKey('Category', on_delete=models.SET_NULL, null=True, related_name='posts')

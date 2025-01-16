@@ -16,6 +16,11 @@
     <div class="" style="padding: 16px 1%;"> 
         <h2 class="">{{ post.title }}</h2>
 
+        {% if maverick %}
+            <h3>Linked Maverick: {{ maverick.name }}</h3>
+            <p><a href="{% url 'maverick_profile' maverick.id %}">View Maverick Profile</a></p>
+        {% endif %}
+
       
         
 
@@ -41,9 +46,11 @@
 
         <div>
             {% if post.author.userprofile.profile_picture %}
-            <img src="{{ post.author.userprofile.profile_picture.url }}" alt="{{ post.author.username }}'s profile" class="rounded-circle" width="30" height="30">
+            <a href="{% url 'public_profile' username=post.author.username %}" style="text-decoration: none;">
+                <img src="{{ post.author.userprofile.profile_picture.url }}" alt="{{ post.author.username }}'s profile" class="rounded-circle" width="30" height="30">
             {% endif %}
-            <a href="{% url 'public_profile' username=post.author.username %}">{{ post.author.username }}</a>
+                {{ post.author.username }}
+            </a>
             <p>{{ post.created_at|date:"F j, Y" }}</p>
        <!-- <p>{{ post.updated_at|date:"F j, Y" }}</p> -->
         </div>    

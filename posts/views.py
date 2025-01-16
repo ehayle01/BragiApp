@@ -66,20 +66,28 @@ def post_detail(request, pk):
     # Ensure comments are ordered by 'created_at' in descending order
     comments = Comment.objects.filter(post=post, parent__isnull=True).order_by('-created_at')
 
+    # Pass the Maverick to the template if the post has a Maverick linked
+    maverick = post.maverick if post.maverick else None
+
     return render(request, 'posts/post_detail.html', {
         'post': post,
         'comments': comments,  # Passing top-level comments to the template
+        'maverick': maverick,  # Passing the Maverick if present
+
     })
 
 
-# View for creating a new post
+
 @login_required
 def post_create(request):
     if request.method == 'POST':
-        form = PostForm(request.POST, request.FILES)
+        form = PostForm(request.POST, request.FILES, user=request.user)  # Pass the user to the form
         if form.is_valid():
             post = form.save(commit=False)
             post.author = request.user  # Set the author before saving
+
+            # If a Maverick is selected, it will be saved with the post
+            post.maverick = form.cleaned_data.get('maverick')
 
             if 'publish' in request.POST:  # Check if the publish button was clicked
                 post.status = 'published'  # Set post status as published
@@ -96,11 +104,13 @@ def post_create(request):
         else:
             print(form.errors)  # Log form errors for debugging
     else:
-        form = PostForm()
+        form = PostForm(user=request.user)  # Pass user to the form
 
     return render(request, 'posts/post_form.html', {'form': form})
 
 
+
+# For editing a post (post_edit view)
 @login_required
 def post_edit(request, pk):
     post = get_object_or_404(Post, pk=pk)
@@ -110,7 +120,7 @@ def post_edit(request, pk):
         return redirect('post_list')  # Redirect to the post list if the user is not the author
 
     if request.method == 'POST':
-        form = PostEditForm(request.POST, request.FILES, instance=post)
+        form = PostEditForm(request.POST, request.FILES, instance=post)  # No need to pass user here
         if form.is_valid():
             # Check if the user clicked "Publish" or "Save Changes"
             post = form.save(commit=False)
@@ -133,6 +143,7 @@ def post_edit(request, pk):
         form = PostEditForm(instance=post)
 
     return render(request, 'posts/post_edit.html', {'form': form, 'post': post})
+
 
 
 @login_required

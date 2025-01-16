@@ -19,54 +19,16 @@
         <!-- Form start -->
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
+            {{ form.as_p }}
             
-            <!-- Title Field -->
-            <div class="mb-3">
-                <label for="id_title" class="form-label">Title</label>
-                <div>
-                    {{ form.title }}
-                </div>
-            </div>
             
-            <!-- Content Field -->
-            <div class="mb-3">
-                <label for="id_content" class="form-label">Summary</label>
-                <div>
-                    {{ form.content }}
-                </div>
-            </div>
-            
-            <!-- Image Field -->
-            <div class="mb-3">
-                <label for="id_image" class="form-label">Image</label>
-                <div>
-                    {{ form.image }}
-                </div>
-            </div>
-            
-            <!-- Category Field -->
-            <div class="mb-3">
-                <label for="id_category" class="form-label">Category</label>
-                <div>
-                    {{ form.category }}
-                </div>
-            </div>
-            
-            <!-- Tags Field -->
-            <div class="mb-3">
-                <label for="id_tags" class="form-label">Tags</label>
-                <div>
-                    {{ form.tags }}
-                </div>
-            </div>
-            
-            <!-- Toggle Publish Status -->
-<!-- Toggle Publish/Unpublish Button -->
-{% if post.status == 'draft' %}
-    <button type="submit" name="publish" class="btn btn-success">Publish</button>
-{% else %}
-    <button type="submit" name="unpublish" class="btn btn-warning">Unpublish</button>
-{% endif %}
+           
+            <!-- Toggle Publish/Unpublish Button -->
+            {% if post.status == 'draft' %}
+                <button type="submit" name="publish" class="btn btn-success">Publish</button>
+            {% else %}
+                <button type="submit" name="unpublish" class="btn btn-warning">Unpublish</button>
+            {% endif %}
 
 
             <!-- Submit Button -->

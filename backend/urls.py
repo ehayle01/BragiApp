@@ -15,6 +15,7 @@ urlpatterns = [
     path('comments/', include('comments.urls')),
     path("chat/", include("chat.urls")),
     path('groups/', include('group.urls')),
+    path('mavericks/', include('maverick.urls')),
     
 
 ]

@@ -1,10 +1,12 @@
 #BragiApp\posts\forms.py
 from django import forms
 from .models import Post
+from maverick.models import Maverick  # Import Maverick model to use in the form
+
 
 class PostForm(forms.ModelForm):
     """Form for creating or editing a post."""
-    
+
     status = forms.ChoiceField(
         choices=[('draft', 'Draft'), ('published', 'Published')],
         initial='draft',
@@ -14,7 +16,8 @@ class PostForm(forms.ModelForm):
 
     class Meta:
         model = Post
-        fields = ['title', 'content', 'category', 'tags', 'image', 'status']  # Include status in the form
+        fields = ['title', 'content', 'category', 'tags', 'image', 'status', 'maverick']  # Include maverick field
+
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control rounded', 'placeholder': 'Enter post title'}),
             'content': forms.Textarea(attrs={'class': 'form-control rounded', 'placeholder': 'Write your content here...'}),
@@ -22,6 +25,14 @@ class PostForm(forms.ModelForm):
             'tags': forms.SelectMultiple(attrs={'class': 'form-control rounded'}),
             'image': forms.ClearableFileInput(attrs={'class': 'form-control rounded'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)  # Safely extract 'user' keyword argument
+        super().__init__(*args, **kwargs)
+
+        # Only filter Mavericks if the user argument is passed
+        if user:
+            self.fields['maverick'].queryset = Maverick.objects.filter(user=user)
 
     def clean_tags(self):
         tags_input = self.cleaned_data.get('tags')
@@ -36,6 +47,8 @@ class PostForm(forms.ModelForm):
             if tags:
                 instance.tags.set(tags)  # Associate tags if any
         return instance
+
+
 
 
 class PostEditForm(forms.ModelForm):

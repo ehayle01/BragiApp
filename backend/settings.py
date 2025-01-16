@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'notifications',
     'comments',
     'group',
+    'maverick',
+    'minion',
 ]
 
 ASGI_APPLICATION = "backend.asgi.application"
