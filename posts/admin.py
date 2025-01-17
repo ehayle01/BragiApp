@@ -1,20 +1,17 @@
 # backend/posts/admin.py
 from django.contrib import admin
-from .models import Post, Category, Tag
+from .models import Post
 
 
 # Register the Post model with customization
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
     # Columns to display in the list view
-    list_display = ('title', 'author', 'created_at', 'updated_at', 'category')  # Added category to list display
+    list_display = ('title', 'author', 'created_at', 'updated_at')  # Removed category
     search_fields = ('title', 'content')  # Fields to search by in the admin
-    list_filter = ('created_at', 'category')  # Filter posts by created_at and category
+    list_filter = ('created_at',)  # Removed category filter
     list_display_links = ('title',)  # Make the title clickable in the admin
-    fields = ('title', 'content', 'author', 'category', 'tags', 'image', 'file')  # Fields to display in the form
-
-    # Adding more advanced tag management
-    filter_horizontal = ('tags',)  # This gives a nice, multi-select interface for tags
+    fields = ('title', 'content', 'author', 'image', 'file', 'maverick')  # Removed category and tags fields
 
     # Add image preview for images uploaded in the admin
     def image_preview(self, obj):
@@ -25,7 +22,3 @@ class PostAdmin(admin.ModelAdmin):
 
     # Add the image preview to the list display (optional)
     list_display += ('image_preview',)
-
-# Register the Category and Tag models
-admin.site.register(Category)
-admin.site.register(Tag)

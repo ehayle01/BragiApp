@@ -2,12 +2,11 @@
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
-from .models import Post, Category, Tag
+from .models import Post
 from django.contrib.auth.decorators import login_required
 from .forms import PostForm, PostEditForm
 from django.contrib.auth.models import User
 from django.db.models import Q
-#from fuzzywuzzy import fuzz
 from django.http import Http404, JsonResponse
 from comments.models import Comment
 
@@ -15,11 +14,7 @@ from comments.models import Comment
 # View for listing posts
 @login_required
 def post_list(request):
-
-
     query = request.GET.get('q')  # Get the search query from the URL parameter
-    category_filter = request.GET.get('category')  # Get the category filter from the URL
-    tag_filter = request.GET.get('tag')  # Get the tag filter from the URL
 
     # Filter out drafts and only display published posts
     posts = Post.objects.filter(status='published').prefetch_related('like_set')
@@ -32,24 +27,10 @@ def post_list(request):
             Q(author__username__icontains=query)
         )
 
-    # Filter by category if provided
-    if category_filter:
-        posts = posts.filter(category__name__icontains=category_filter)
-
-    # Filter by tag if provided
-    if tag_filter:
-        posts = posts.filter(tags__name__icontains=tag_filter)
-
-    # Get all categories and tags to populate filters in the template
-    categories = Category.objects.all()
-    tags = Tag.objects.all()
-
     return render(request, 'posts/post_list.html', {
         'posts': posts,
         'current_user': request.user,
         'query': query,  # Pre-fill the search box
-        'categories': categories,  # Pass categories for filtering
-        'tags': tags,  # Pass tags for filtering
     })
 
 
@@ -74,7 +55,6 @@ def post_detail(request, pk):
         'post': post,
         'comments': comments,  # Passing top-level comments to the template
         'maverick': maverick,  # Passing the Maverick if present
-
     })
 
 
@@ -107,7 +87,6 @@ def post_create(request):
         form = PostForm(user=request.user)  # Pass user to the form
 
     return render(request, 'posts/post_form.html', {'form': form})
-
 
 
 # For editing a post (post_edit view)
@@ -165,6 +144,3 @@ def post_delete(request, pk):
 def draft_posts(request):
     drafts = Post.objects.filter(author=request.user, status='draft')  # Filter drafts for the logged-in user
     return render(request, 'posts/draft_list.html', {'drafts': drafts})
-
-
-

@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'group',
     'maverick',
     'minion',
+    'filters',
 ]
 
 ASGI_APPLICATION = "backend.asgi.application"
