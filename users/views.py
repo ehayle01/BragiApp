@@ -1,13 +1,14 @@
- #users/views.py
+ #BragiApp\users\views.py
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required  
 from django.contrib.auth.models import User
 from posts.models import Post  
-from .forms import UserEditForm, UserProfileEditForm
 from .models import UserProfile 
 from followers.models import Follow
+from .forms import UserEditForm, UserProfileEditForm
+
 
 
 # Public Profile View (for viewing any user's profile)
@@ -18,8 +19,8 @@ def public_profile_view(request, username):
     # Retrieve the associated profile of the user
     user_profile, created = UserProfile.objects.get_or_create(user=user)
     
-    # Retrieve posts created by this user
-    user_posts = Post.objects.filter(author=user).order_by('-created_at')
+    # Retrieve posts created directly by this user (exclude Mavericks' posts)
+    user_posts = Post.objects.filter(author=user, maverick__isnull=True).order_by('-created_at')
     
     # Check if the current user is logged in
     is_authenticated = request.user.is_authenticated
@@ -44,7 +45,6 @@ def public_profile_view(request, username):
         'followers_count': followers_count,  # Number of followers
         'following_count': following_count,  # Number of people the user is following
     })
-
 
 # Register View
 def register_view(request):
@@ -71,8 +71,8 @@ def register_view(request):
 def profile_view(request):
     user_profile, created = UserProfile.objects.get_or_create(user=request.user)
 
-    # Retrieve posts that the logged-in user has created
-    user_posts = Post.objects.filter(author=request.user).order_by('-created_at')
+    # Retrieve posts that the logged-in user has created, excluding posts from Mavericks
+    user_posts = Post.objects.filter(author=request.user, maverick__isnull=True).order_by('-created_at')
 
     # Get the count of followers and following for the logged-in user
     followers_count = Follow.objects.filter(followed=request.user).count()  # Count of people following the user
@@ -82,6 +82,16 @@ def profile_view(request):
     followers_url = f"/followers/followers/{request.user.username}/"
     following_url = f"/followers/following/{request.user.username}/"
 
+    # Get all Mavericks associated with the user
+    maverick_posts = Post.objects.filter(author=request.user).exclude(maverick=None)  # Get posts with non-null 'maverick' field
+
+    # Group Maverick posts by Maverick
+    maverick_groups = {}
+    for post in maverick_posts:
+        if post.maverick not in maverick_groups:
+            maverick_groups[post.maverick] = []
+        maverick_groups[post.maverick].append(post)
+        
     return render(request, 'users/profile.html', {
         'user': request.user,
         'user_profile': user_profile,
@@ -90,6 +100,7 @@ def profile_view(request):
         'following_count': following_count,
         'followers_url': followers_url,  # Pass the followers list URL
         'following_url': following_url,  # Pass the following list URL
+        'maverick_groups': maverick_groups,  # Pass the Maverick posts
     })
 
 @login_required

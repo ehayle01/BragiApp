@@ -57,6 +57,26 @@
                 {% endfor %}
             </ul>
 
+            <!-- User's Mavericks Posts Section -->
+            <h3>Your Mavericks' Posts:</h3>
+            {% for maverick, posts in maverick_groups.items %}
+                <h4>{{ maverick.name }}</h4> <!-- Display the Maverick's name or any attribute -->
+                <ul class="list-group mb-4">
+                    {% for post in posts %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <a href="{% url 'post_detail' pk=post.pk %}" class="text-decoration-none">
+                            {{ post.title }}
+                        </a>
+                        <a href="{% url 'post_edit' pk=post.pk %}" class="btn btn-outline-primary btn-sm">Edit</a>
+                    </li>
+                    {% empty %}
+                    <p class="text-center">This Maverick hasn't created any posts yet.</p>
+                    {% endfor %}
+                </ul>
+            {% empty %}
+                <p class="text-center">You haven't created any Mavericks yet.</p>
+            {% endfor %}
+
         </div>
 
 
