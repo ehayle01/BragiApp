@@ -1,6 +1,7 @@
 # BragiApp\posts\views.py
 
 from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
 from .models import Post, Category, Tag
 from django.contrib.auth.decorators import login_required
 from .forms import PostForm, PostEditForm
@@ -77,7 +78,6 @@ def post_detail(request, pk):
     })
 
 
-
 @login_required
 def post_create(request):
     if request.method == 'POST':
@@ -144,6 +144,21 @@ def post_edit(request, pk):
 
     return render(request, 'posts/post_edit.html', {'form': form, 'post': post})
 
+
+@login_required
+def post_delete(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+
+    # Ensure that the logged-in user is the author of the post
+    if post.author != request.user:
+        raise Http404("You do not have permission to delete this post")
+
+    if request.method == 'POST':
+        post.delete()  # Delete the post
+        messages.success(request, 'Your post has been deleted successfully.')  # Add a success message
+        return redirect('post_list')  # Redirect to the post list page after deletion
+
+    return render(request, 'posts/delete_confirm.html', {'post': post})
 
 
 @login_required

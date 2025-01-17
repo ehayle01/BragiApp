@@ -7,16 +7,10 @@ from maverick.models import Maverick  # Import Maverick model to use in the form
 class PostForm(forms.ModelForm):
     """Form for creating or editing a post."""
 
-    status = forms.ChoiceField(
-        choices=[('draft', 'Draft'), ('published', 'Published')],
-        initial='draft',
-        widget=forms.RadioSelect(),
-        required=False
-    )
 
     class Meta:
         model = Post
-        fields = ['title', 'content', 'category', 'tags', 'image', 'status', 'maverick']  # Include maverick field
+        fields = ['title', 'content', 'category', 'tags', 'image', 'maverick']  # Include maverick field
 
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control rounded', 'placeholder': 'Enter post title'}),
@@ -54,15 +48,10 @@ class PostForm(forms.ModelForm):
 class PostEditForm(forms.ModelForm):
     """Form for editing an existing post."""
     
-    status = forms.ChoiceField(
-        choices=[('draft', 'Draft'), ('published', 'Published')],
-        required=False,  # Status will be handled in the view, so it's not strictly required here
-        widget=forms.RadioSelect(),
-    )
 
     class Meta:
         model = Post
-        fields = ['title', 'content', 'category', 'tags', 'image', 'status']
+        fields = ['title', 'content', 'category', 'tags', 'image']
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control rounded'}),
             'content': forms.Textarea(attrs={'class': 'form-control rounded'}),

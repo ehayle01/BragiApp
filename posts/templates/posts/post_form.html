@@ -9,6 +9,18 @@
     </button>
 </div>
 
+<!-- Status Message -->
+{% if post %}
+<div class="alert {{ post.status|yesno:'alert-success,alert-warning' }}" role="alert">
+    <strong>Status:</strong> 
+    {% if post.status == 'published' %}
+        This post is currently <strong>Published</strong>.
+    {% else %}
+        This post is currently <strong>Unpublished</strong>.
+    {% endif %}
+</div>
+{% endif %}
+
 <!-- Form Container -->
 <div class="container mt-5" style="padding: 16px 1%;">
     <h4 class="mb-4">Create a New Post</h4>
@@ -17,7 +29,6 @@
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}
-
         
         <!-- Publish/Save Button -->
         <div class="mb-3">
