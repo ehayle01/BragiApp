@@ -5,6 +5,37 @@
 {% block content %}
 <div class="container py-4">
 
+
+    <div class="filter-section">
+        <!-- Filter by Category -->
+        <h3>Filter by Category</h3>
+        <ul>
+            <!-- Link to clear the category filter -->
+            <li><a href="?{% if tag_filter %}tag={{ tag_filter }}{% endif %}">All Categories</a></li>
+            {% for category in categories %}
+                <li><a href="?category={{ category.id }}{% if tag_filter %}&tag={{ tag_filter }}{% endif %}">{{ category.name }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+    
+    <div class="filter-section">
+        <!-- Filter by Tag -->
+        <h3>Filter by Tag</h3>
+        <ul>
+            <!-- Link to clear the tag filter -->
+            <li><a href="?{% if category_filter %}category={{ category_filter }}{% endif %}">All Tags</a></li>
+            {% for tag in tags %}
+                <li><a href="?tag={{ tag.id }}{% if category_filter %}&category={{ category_filter }}{% endif %}">{{ tag.name }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    
+    <p>Category Filter: {{ category_filter }}</p>
+    <p>Tag Filter: {{ tag_filter }}</p>
+    
+
+
     <!-- Post List -->
     <div class="row">
         {% for post in posts %}
@@ -76,4 +107,7 @@
         {% endfor %}
     </div>
 </div>
+
+
+
 {% endblock %}

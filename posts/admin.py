@@ -11,7 +11,7 @@ class PostAdmin(admin.ModelAdmin):
     search_fields = ('title', 'content')  # Fields to search by in the admin
     list_filter = ('created_at',)  # Removed category filter
     list_display_links = ('title',)  # Make the title clickable in the admin
-    fields = ('title', 'content', 'author', 'image', 'file', 'maverick')  # Removed category and tags fields
+    fields = ('title', 'content', 'author', 'image', 'file', 'maverick', 'category', 'tags')  
 
     # Add image preview for images uploaded in the admin
     def image_preview(self, obj):

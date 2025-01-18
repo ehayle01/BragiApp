@@ -2,14 +2,18 @@
 from django import forms
 from .models import Post
 from maverick.models import Maverick  # Import Maverick model to use in the form
+from filters.models import Category, Tag
 
 
 class PostForm(forms.ModelForm):
     """Form for creating or editing a post."""
 
+    category = forms.ModelChoiceField(queryset=Category.objects.all(), required=False, empty_label="Select a Category")
+    tags = forms.ModelMultipleChoiceField(queryset=Tag.objects.all(), required=False, widget=forms.CheckboxSelectMultiple)
+
     class Meta:
         model = Post
-        fields = ['title', 'content', 'image', 'maverick']  # Removed category and tags fields
+        fields = ['title', 'content', 'image', 'category', 'tags', 'maverick']  
 
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control rounded', 'placeholder': 'Enter post title'}),

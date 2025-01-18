@@ -9,15 +9,26 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 from django.http import Http404, JsonResponse
 from comments.models import Comment
+from filters.models import Category, Tag
+
 
 
 # View for listing posts
 @login_required
 def post_list(request):
-    query = request.GET.get('q')  # Get the search query from the URL parameter
-
-    # Filter out drafts and only display published posts
+    categories = Category.objects.all()
+    tags = Tag.objects.all()
+    
+    category_filter = request.GET.get('category')
+    tag_filter = request.GET.get('tag')
+    query = request.GET.get('q') 
     posts = Post.objects.filter(status='published').prefetch_related('like_set')
+
+    if category_filter:
+        posts = posts.filter(category__id=category_filter)
+
+    if tag_filter:
+        posts = posts.filter(tags__id=tag_filter)
 
     # If there is a search query, perform fuzzy search on the title, content, and author
     if query:
@@ -31,7 +42,12 @@ def post_list(request):
         'posts': posts,
         'current_user': request.user,
         'query': query,  # Pre-fill the search box
+        'categories': categories,
+        'tags': tags,
+        'category_filter': category_filter,
+        'tag_filter': tag_filter,
     })
+
 
 
 # View for displaying post details
