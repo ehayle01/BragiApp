@@ -13,20 +13,24 @@ from filters.models import Category, Tag
 
 
 
-# View for listing posts
 @login_required
 def post_list(request):
     categories = Category.objects.all()
     tags = Tag.objects.all()
     
+    # Retrieve filters from GET request
     category_filter = request.GET.get('category')
     tag_filter = request.GET.get('tag')
     query = request.GET.get('q') 
+    
+    # Initialize the queryset for published posts
     posts = Post.objects.filter(status='published').prefetch_related('like_set')
 
+    # Apply category filter if provided
     if category_filter:
         posts = posts.filter(category__id=category_filter)
 
+    # Apply tag filter if provided
     if tag_filter:
         posts = posts.filter(tags__id=tag_filter)
 
@@ -38,7 +42,8 @@ def post_list(request):
             Q(author__username__icontains=query)
         )
 
-    return render(request, 'posts/post_list.html', {
+    # Pass the context for rendering
+    context = {
         'posts': posts,
         'current_user': request.user,
         'query': query,  # Pre-fill the search box
@@ -46,7 +51,9 @@ def post_list(request):
         'tags': tags,
         'category_filter': category_filter,
         'tag_filter': tag_filter,
-    })
+    }
+
+    return render(request, 'posts/post_list.html', context)
 
 
 
