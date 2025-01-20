@@ -85,6 +85,7 @@ TEMPLATES = [
                 'backend.context_processors.toolbar_items',
                 'backend.context_processors.published_posts_count', 
                 'backend.context_processors.group_count',
+                'backend.context_processors.combined_count',
 
             ],
         },

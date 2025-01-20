@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="text-left" style="position: sticky; top: 0; margin: 0; padding: 0; background-color: #ffffff; border-bottom: 1px solid var(--navbar-border-color);">
+    <button onclick="window.history.back();" class="btn">
+        <i class="fa-solid fa-chevron-left"></i> Back
+    </button>
+</div>
+
+<!-- Combined Mavericks and Users List -->
+<div class="row">
+    {% for item in combined_list %}
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+            <div class="card shadow-sm" style="border-radius: 1rem; overflow: hidden; position: relative;">
+                {% if item.profile_picture %}
+                    <a href="{% if item.type == 'maverick' %}{% url 'maverick_profile' id=item.id %}{% else %}{% url 'public_profile_view' username=item.username %}{% endif %}">
+                        <img src="{{ item.profile_picture.url }}" alt="{% if item.type == 'maverick' %}{{ item.name }}{% else %}{{ item.username }}{% endif %}" class="card-img-top" style="height: 200px; object-fit: cover;">
+                    </a>
+                {% else %}
+                    <div class="card-img-top" style="height: 200px; background-color: #f0f0f0;"></div>
+                {% endif %}
+                <div class="card-body">
+                    <a href="{% if item.type == 'maverick' %}{% url 'maverick_profile' id=item.id %}{% else %}{% url 'public_profile_view' username=item.username %}{% endif %}" class="text-dark text-decoration-none">
+                        <h5 class="card-title">{% if item.type == 'maverick' %}{{ item.name }}{% else %}{{ item.username }}{% endif %}</h5>
+                    </a>
+
+                    <!-- Bio and Location for Maverick and User -->
+                    {% if item.type == 'maverick' %}
+                        <p class="text-muted small mb-1">{{ item.bio|default:"No bio available" }}</p>
+                        <p class="text-muted small">{{ item.location|default:"Location not provided" }}</p>
+                    {% else %}
+                        <!-- For User, access related UserProfile fields -->
+                        {% if item.userprofile %}
+                            <p class="text-muted small mb-1">{{ item.userprofile.bio|default:"No bio available" }}</p>
+                            <p class="text-muted small">{{ item.userprofile.location|default:"Location not provided" }}</p>
+                        {% else %}
+                            <p class="text-muted small mb-1">No bio available</p>
+                            <p class="text-muted small">Location not provided</p>
+                        {% endif %}
+                    {% endif %}
+
+                    <!-- Profile Picture and Name -->
+                    {% if item.type == 'maverick' %}
+                        <div class="d-flex align-items-center mt-2">
+                            <img src="{{ item.profile_picture.url }}" alt="{{ item.name }}" class="rounded-circle me-2" width="30" height="30">
+                            <a href="{% url 'maverick_profile' id=item.id %}" class="text-muted small">{{ item.name }}</a>
+                        </div>
+                    {% else %}
+                        <div class="d-flex align-items-center mt-2">
+                            {% if item.userprofile.profile_picture %}
+                                <img src="{{ item.userprofile.profile_picture.url }}" alt="{{ item.username }}" class="rounded-circle me-2" width="30" height="30">
+                            {% else %}
+                                <img src="{% static 'default_profile_pic.png' %}" alt="Default Profile Picture" class="rounded-circle me-2" width="30" height="30">
+                            {% endif %}
+                            <a href="{% url 'public_profile_view' username=item.username %}" class="text-muted small">{{ item.username }}</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <p class="text-center">No Mavericks or Users found.</p>
+    {% endfor %}
+</div>
+{% endblock %}

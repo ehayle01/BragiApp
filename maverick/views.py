@@ -1,5 +1,6 @@
 #BragiApp\maverick\views.py
 from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.models import User
 from .models import Maverick
 from posts.models import Post
 from .forms import MaverickForm
@@ -76,3 +77,27 @@ def delete_maverick(request, id):
         return redirect('list_mavericks')  # Redirect to the list of Mavericks after deletion
 
     return render(request, 'maverick/delete_maverick.html', {'maverick': maverick})
+
+
+
+# View to list all Mavericks (public view)
+def mixed_listing(request):
+    # Fetch all Mavericks
+    mavericks = Maverick.objects.all()
+
+    # Fetch all users
+    users = User.objects.all()
+
+    # Combine both lists
+    combined_list = list(mavericks) + list(users)
+
+    # Mark the type of each item
+    for item in combined_list:
+        if isinstance(item, Maverick):
+            item.type = 'maverick'
+        else:
+            item.type = 'user'
+
+    return render(request, 'maverick/mixed_listing.html', {
+        'combined_list': combined_list
+    })

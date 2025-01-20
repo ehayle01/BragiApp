@@ -1,5 +1,6 @@
 #BragiApp\maverick\urls.py
 from django.urls import path
+from users import views as user_views
 from . import views
 
 urlpatterns = [
@@ -14,6 +15,10 @@ urlpatterns = [
 
     path('maverick/', views.list_mavericks, name='list_mavericks'), # users maverick list
     path('<int:id>/delete/', views.delete_maverick, name='delete_maverick'),  # Add delete URL
+
+    path('mavericks/', views.mixed_listing, name='mixed_listing'),  # Mixed listing of Mavericks and users
+    path('profile/<str:username>/', user_views.public_profile_view, name='public_profile_view'),  # User profile view
+
 
 
 ]
