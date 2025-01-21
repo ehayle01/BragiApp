@@ -128,29 +128,34 @@ def post_edit(request, pk):
         return redirect('post_list')  # Redirect to the post list if the user is not the author
 
     if request.method == 'POST':
-        form = PostEditForm(request.POST, request.FILES, instance=post)  # No need to pass user here
+        form = PostEditForm(request.POST, request.FILES, instance=post)
+
         if form.is_valid():
-            # Check if the user clicked "Publish" or "Save Changes"
+            # Save the post without committing yet
             post = form.save(commit=False)
+
+            # Check if Publish or Unpublish button was clicked
             if 'publish' in request.POST:
-                post.status = 'published'  # Mark as published
-            else:
-                post.status = 'draft'  # Keep as draft
+                post.status = 'published'
+            elif 'unpublish' in request.POST:
+                post.status = 'draft'
+            # Save the post now, including the status change if necessary
+            post.save()
 
-            post.save()  # Save the post with the updated status
-
-            # After saving, redirect to either the post detail or back to drafts
+            # Redirect based on the new status
             if post.status == 'published':
-                return redirect('post_detail', pk=post.pk)  # Redirect to post detail if published
+                return redirect('post_detail', pk=post.pk)
             else:
-                return redirect('draft_posts')  # Redirect back to draft posts if saved as draft
+                return redirect('draft_posts')  # Redirect to drafts page
 
-        else:
-            print(form.errors)  # Log form errors for debugging
     else:
         form = PostEditForm(instance=post)
 
     return render(request, 'posts/post_edit.html', {'form': form, 'post': post})
+
+
+
+
 
 
 @login_required

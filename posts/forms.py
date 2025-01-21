@@ -47,7 +47,8 @@ class PostEditForm(forms.ModelForm):
 
     class Meta:
         model = Post
-        fields = ['title', 'content', 'image', 'category', 'tags', 'maverick']  # Include the relevant fields
+        # Exclude the status field from the form
+        fields = ['title', 'content', 'image', 'category', 'tags', 'maverick']  # Do not include 'status'
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control rounded', 'placeholder': 'Enter post title'}),
             'content': forms.Textarea(attrs={'class': 'form-control rounded', 'placeholder': 'Write your content here...'}),
@@ -66,12 +67,10 @@ class PostEditForm(forms.ModelForm):
     def save(self, commit=True):
         instance = super().save(commit=False)
         
-        # Set the status to draft or published when saving the post
-        if 'status' not in self.cleaned_data:
-            instance.status = 'draft'  # Default to 'draft' if not provided
-        
-        instance.status = self.cleaned_data.get('status', instance.status)  # Ensure the status field is set
+        # Ensure status is not changed unless explicitly updated by the view
+        instance.status = self.instance.status  # Keep the current status unchanged
         
         if commit:
             instance.save()  # Save the post instance
         return instance
+
