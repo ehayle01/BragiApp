@@ -40,15 +40,13 @@ class PostForm(forms.ModelForm):
 class PostEditForm(forms.ModelForm):
     """Form for editing an existing post."""
 
-    # Include category, tags, and maverick fields for editing
     category = forms.ModelChoiceField(queryset=Category.objects.all(), required=False, empty_label="Select a Category")
     tags = forms.ModelMultipleChoiceField(queryset=Tag.objects.all(), required=False, widget=forms.CheckboxSelectMultiple)
     maverick = forms.ModelChoiceField(queryset=Maverick.objects.all(), required=False, empty_label="Select a Maverick")
 
     class Meta:
         model = Post
-        # Exclude the status field from the form
-        fields = ['title', 'content', 'image', 'category', 'tags', 'maverick']  # Do not include 'status'
+        fields = ['title', 'content', 'image', 'category', 'tags', 'maverick']
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control rounded', 'placeholder': 'Enter post title'}),
             'content': forms.Textarea(attrs={'class': 'form-control rounded', 'placeholder': 'Write your content here...'}),
@@ -56,21 +54,24 @@ class PostEditForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
-        # Safely extract 'user' keyword argument from kwargs
         user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
 
-        # Filter the Mavericks by the logged-in user (if provided)
+        # Filter Mavericks by the logged-in user (if provided)
         if user:
             self.fields['maverick'].queryset = Maverick.objects.filter(user=user)
 
     def save(self, commit=True):
         instance = super().save(commit=False)
-        
-        # Ensure status is not changed unless explicitly updated by the view
-        instance.status = self.instance.status  # Keep the current status unchanged
-        
+
+        # Ensure the category and tags are updated
+        if self.cleaned_data['category']:
+            instance.category = self.cleaned_data['category']
+        instance.tags.set(self.cleaned_data['tags'])
+
+        # Save the instance (including category and tags)
         if commit:
-            instance.save()  # Save the post instance
+            instance.save()
+
         return instance
 

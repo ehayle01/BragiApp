@@ -123,35 +123,26 @@ def post_create(request):
 def post_edit(request, pk):
     post = get_object_or_404(Post, pk=pk)
 
-    # Ensure the logged-in user is the author of the post
     if post.author != request.user:
-        return redirect('post_list')  # Redirect to the post list if the user is not the author
+        return redirect('post_list')
 
     if request.method == 'POST':
-        form = PostEditForm(request.POST, request.FILES, instance=post)
+        form = PostEditForm(request.POST, request.FILES, instance=post, user=request.user)
 
         if form.is_valid():
-            # Save the post without committing yet
-            post = form.save(commit=False)
-
-            # Check if Publish or Unpublish button was clicked
-            if 'publish' in request.POST:
-                post.status = 'published'
-            elif 'unpublish' in request.POST:
-                post.status = 'draft'
-            # Save the post now, including the status change if necessary
-            post.save()
+            # Save the post (which includes saving the category and tags)
+            form.save()
 
             # Redirect based on the new status
             if post.status == 'published':
                 return redirect('post_detail', pk=post.pk)
             else:
-                return redirect('draft_posts')  # Redirect to drafts page
-
+                return redirect('draft_posts')
     else:
-        form = PostEditForm(instance=post)
+        form = PostEditForm(instance=post, user=request.user)
 
     return render(request, 'posts/post_edit.html', {'form': form, 'post': post})
+
 
 
 
