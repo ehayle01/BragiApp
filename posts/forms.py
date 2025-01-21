@@ -40,20 +40,36 @@ class PostForm(forms.ModelForm):
 class PostEditForm(forms.ModelForm):
     """Form for editing an existing post."""
 
+    # Include category, tags, and maverick fields for editing
+    category = forms.ModelChoiceField(queryset=Category.objects.all(), required=False, empty_label="Select a Category")
+    tags = forms.ModelMultipleChoiceField(queryset=Tag.objects.all(), required=False, widget=forms.CheckboxSelectMultiple)
+    maverick = forms.ModelChoiceField(queryset=Maverick.objects.all(), required=False, empty_label="Select a Maverick")
+
     class Meta:
         model = Post
-        fields = ['title', 'content', 'image']  # Removed category and tags fields
+        fields = ['title', 'content', 'image', 'category', 'tags', 'maverick']  # Include the relevant fields
         widgets = {
-            'title': forms.TextInput(attrs={'class': 'form-control rounded'}),
-            'content': forms.Textarea(attrs={'class': 'form-control rounded'}),
+            'title': forms.TextInput(attrs={'class': 'form-control rounded', 'placeholder': 'Enter post title'}),
+            'content': forms.Textarea(attrs={'class': 'form-control rounded', 'placeholder': 'Write your content here...'}),
             'image': forms.ClearableFileInput(attrs={'class': 'form-control rounded'}),
         }
 
+    def __init__(self, *args, **kwargs):
+        # Safely extract 'user' keyword argument from kwargs
+        user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+
+        # Filter the Mavericks by the logged-in user (if provided)
+        if user:
+            self.fields['maverick'].queryset = Maverick.objects.filter(user=user)
+
     def save(self, commit=True):
         instance = super().save(commit=False)
-        # Ensure status is set to 'draft' or 'published' when the form is saved
+        
+        # Set the status to draft or published when saving the post
         if 'status' not in self.cleaned_data:
-            instance.status = 'draft'  # Default to 'draft' if status is not explicitly provided
+            instance.status = 'draft'  # Default to 'draft' if not provided
+        
         instance.status = self.cleaned_data.get('status', instance.status)  # Ensure the status field is set
         
         if commit:

@@ -7,8 +7,9 @@
 
 <!-- Filter dropdown list -->
 
-<nav class="navbar navbar-expand mb-5">
+<nav class="navbar navbar-expand bg-body-tertiary">
     <div class="container-fluid">
+
       <div class="navbar-nav me-auto">
         <div class="dropdown">
           <button class="btn btn-sm dropdown-toggle text-secondary" type="button" id="dropdownMenuButtonA" data-bs-toggle="dropdown" aria-expanded="false">
@@ -34,7 +35,6 @@
           <li class="rounded-0">
             <a class="btn btn-sm text-secondary text-decoration-none" href="#">Pre Sale</a>
           </li>
-
         </ul>
       </div>
 
@@ -54,7 +54,6 @@
               </ul>
             </div>
           </li>
-  
           <li class="nav-item mx-1">
             <div class="dropdown">
               <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButtonC" data-bs-toggle="dropdown" aria-expanded="false">
@@ -69,7 +68,6 @@
               </ul>
             </div>
           </li>
-
           <!-- List/Grid Toggle Buttons -->
           <li class="nav-item mx-1">
             <ul class="d-flex list-unstyled">
@@ -89,16 +87,36 @@
               </li>
             </ul>
           </li>
-
         </ul>
       </div>
     </div>
   </nav>
 
-  <!-- Post List 
-  <p>Category Filter: {{ category_filter }}</p>
-  <p>Tag Filter: {{ tag_filter }}</p>
-    -->
+  
+  <div class="container-fluid my-2">
+    <ul class="nav">
+      {% if category_name %}
+        <li class="btn btn-sm btn-outline-secondary me-2 px-1 py-0">
+          {{ category_name }}
+          <!-- Remove category filter by clicking the X -->
+          <a href="?{% if tag_filter %}tag={{ tag_filter }}{% endif %}" class="text-secondary ms-1" title="Remove Filter">
+            <i class="fa-solid fa-times text-muted"></i>
+          </a>
+        </li>
+      {% endif %}
+      {% if tag_name %}
+        <li class="btn btn-sm btn-outline-secondary me-2 px-1 py-0">
+          {{ tag_name }}
+          <!-- Remove tag filter by clicking the X -->
+          <a href="?{% if category_filter %}category={{ category_filter }}{% endif %}" class="text-secondary ms-1" title="Remove Filter">
+            <i class="fa-solid fa-times text-muted"></i>
+          </a>
+        </li>
+      {% endif %}
+    </ul>
+  </div>
+
+  
 
 
   <!-- Post List -->

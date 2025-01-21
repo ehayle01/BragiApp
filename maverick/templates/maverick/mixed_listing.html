@@ -13,13 +13,6 @@
     {% for item in combined_list %}
         <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
             <div class="card shadow-sm" style="border-radius: 1rem; overflow: hidden; position: relative;">
-                {% if item.profile_picture %}
-                    <a href="{% if item.type == 'maverick' %}{% url 'maverick_profile' id=item.id %}{% else %}{% url 'public_profile_view' username=item.username %}{% endif %}">
-                        <img src="{{ item.profile_picture.url }}" alt="{% if item.type == 'maverick' %}{{ item.name }}{% else %}{{ item.username }}{% endif %}" class="card-img-top" style="height: 200px; object-fit: cover;">
-                    </a>
-                {% else %}
-                    <div class="card-img-top" style="height: 200px; background-color: #f0f0f0;"></div>
-                {% endif %}
                 <div class="card-body">
                     <a href="{% if item.type == 'maverick' %}{% url 'maverick_profile' id=item.id %}{% else %}{% url 'public_profile_view' username=item.username %}{% endif %}" class="text-dark text-decoration-none">
                         <h5 class="card-title">{% if item.type == 'maverick' %}{{ item.name }}{% else %}{{ item.username }}{% endif %}</h5>

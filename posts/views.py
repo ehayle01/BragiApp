@@ -17,12 +17,12 @@ from filters.models import Category, Tag
 def post_list(request):
     categories = Category.objects.all()
     tags = Tag.objects.all()
-    
+
     # Retrieve filters from GET request
     category_filter = request.GET.get('category')
     tag_filter = request.GET.get('tag')
-    query = request.GET.get('q') 
-    
+    query = request.GET.get('q')
+
     # Initialize the queryset for published posts
     posts = Post.objects.filter(status='published').prefetch_related('like_set')
 
@@ -42,7 +42,10 @@ def post_list(request):
             Q(author__username__icontains=query)
         )
 
-    # Pass the context for rendering
+    # Get category and tag names for displaying in the UI
+    category_name = Category.objects.filter(id=category_filter).first() if category_filter else None
+    tag_name = Tag.objects.filter(id=tag_filter).first() if tag_filter else None
+
     context = {
         'posts': posts,
         'current_user': request.user,
@@ -51,9 +54,12 @@ def post_list(request):
         'tags': tags,
         'category_filter': category_filter,
         'tag_filter': tag_filter,
+        'category_name': category_name,
+        'tag_name': tag_name,
     }
 
     return render(request, 'posts/post_list.html', context)
+
 
 
 
