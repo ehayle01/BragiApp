@@ -6,115 +6,158 @@
 <div  class=" py-4 px-2">
 
 <!-- Filter dropdown list -->
-
 <nav class="navbar navbar-expand bg-body-tertiary">
-    <div class="container-fluid">
+  <div class="container-fluid">
 
-      <div class="navbar-nav me-auto">
-        <div class="dropdown">
-          <button class="btn btn-sm dropdown-toggle text-secondary" type="button" id="dropdownMenuButtonA" data-bs-toggle="dropdown" aria-expanded="false">
-            <i class="fa-regular fa-star text-secondary"></i>
-            <span class="mx-1 text-secondary">Watchlist Name</span>
-          </button>
-          <ul class="dropdown-menu" aria-labelledby="dropdownMenuButtonA">
-            <li><a class="dropdown-item" href="#">Item 1</a></li>
-            <li><a class="dropdown-item" href="#">Item 2</a></li>
-            <li><a class="dropdown-item" href="#">Item 3</a></li>
-          </ul>
-        </div>
-      </div>
-  
-      <div class="navbar-nav">
-        <ul class="nav justify-content-center border border-1 border-secondary rounded overflow-hidden">
-          <li class=" border-end border-1 border-secondary rounded-0 ">
-            <a class="btn btn-sm text-secondary text-decoration-none" aria-current="page" href="#">All Items</a>
-          </li>
-          <li class="border-end border-1 border-secondary rounded-0" >
-            <a class="btn btn-sm text-secondary text-decoration-none" href="#">Sale Open</a>
-          </li>
-          <li class="rounded-0">
-            <a class="btn btn-sm text-secondary text-decoration-none" href="#">Pre Sale</a>
-          </li>
-        </ul>
-      </div>
-
-      <div class="navbar-nav ms-auto">
-        <ul class="nav justify-content-end">
-          <li class="nav-item mx-1">
-            <div class="dropdown">
-              <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButtonB" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="fa-solid fa-list-ul"></i>
-                <span class="mx-1">Category</span> 
-              </button>
-              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButtonB">
-                <li><a class="dropdown-item" href="?{% if tag_filter %}tag={{ tag_filter }}{% endif %}">All Categories</a></li>
-                {% for category in categories %}
-                  <li><a class="dropdown-item" href="?category={{ category.id }}{% if tag_filter %}&tag={{ tag_filter }}{% endif %}">{{ category.name }}</a></li>
-                {% endfor %}
-              </ul>
-            </div>
-          </li>
-          <li class="nav-item mx-1">
-            <div class="dropdown">
-              <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButtonC" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="fa-solid fa-filter"></i>
-                <span class="mx-1">Tags</span> 
-              </button>
-              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButtonC">
-                <li><a class="dropdown-item" href="?{% if category_filter %}category={{ category_filter }}{% endif %}">All Tags</a></li>
-                {% for tag in tags %}
-                  <li><a class="dropdown-item" href="?tag={{ tag.id }}{% if category_filter %}&category={{ category_filter }}{% endif %}">{{ tag.name }}</a></li>
-                {% endfor %}
-              </ul>
-            </div>
-          </li>
-          <!-- List/Grid Toggle Buttons -->
-          <li class="nav-item mx-1">
-            <ul class="d-flex list-unstyled">
-              <li class="nav-item mx-1">
-                <div>
-                  <a href="#" class="btn btn-outline-secondary btn-sm" id="listView">
-                    <i class="fa-solid fa-list-ul"></i>
-                  </a>
-                </div>
-              </li>
-              <li class="nav-item mx-1">
-                <div>
-                  <a href="#" class="btn btn-outline-secondary btn-sm" id="gridView">
-                    <i class="fa-solid fa-grip-vertical"></i>
-                  </a>
-                </div>
-              </li>
-            </ul>
-          </li>
-        </ul>
-      </div>
+    <div class="navbar-nav">
+      <ul class="nav justify-content-center border border-1 border-secondary rounded overflow-hidden">
+        <li class="border-end border-1 border-secondary rounded-0 ">
+          <a class="btn btn-sm text-secondary text-decoration-none" aria-current="page" href="#">All Items</a>
+        </li>
+        <li class="border-end border-1 border-secondary rounded-0">
+          <a class="btn btn-sm text-secondary text-decoration-none" href="#">Sale Open</a>
+        </li>
+        <li class="rounded-0">
+          <a class="btn btn-sm text-secondary text-decoration-none" href="#">Pre Sale</a>
+        </li>
+      </ul>
     </div>
-  </nav>
 
-  
-  <div class="container-fluid my-2">
-    <ul class="nav">
-      {% if category_name %}
-        <li class="btn btn-sm btn-outline-secondary me-2 px-1 py-0">
-          {{ category_name }}
-          <!-- Remove category filter by clicking the X -->
-          <a href="?{% if tag_filter %}tag={{ tag_filter }}{% endif %}" class="text-secondary ms-1" title="Remove Filter">
-            <i class="fa-solid fa-times text-muted"></i>
-          </a>
-        </li>
-      {% endif %}
-      {% if tag_name %}
-        <li class="btn btn-sm btn-outline-secondary me-2 px-1 py-0">
-          {{ tag_name }}
-          <!-- Remove tag filter by clicking the X -->
-          <a href="?{% if category_filter %}category={{ category_filter }}{% endif %}" class="text-secondary ms-1" title="Remove Filter">
-            <i class="fa-solid fa-times text-muted"></i>
-          </a>
-        </li>
-      {% endif %}
+    <div class="navbar-nav ms-auto">
+      <ul class="nav justify-content-end">
+
+<!-- Category Dropdown (Multiple Selection) -->
+<li class="nav-item mx-1">
+  <div class="dropdown">
+    <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButtonB" data-bs-toggle="dropdown" aria-expanded="false">
+      <i class="fa-solid fa-list-ul"></i>
+      <span class="mx-1">Category</span>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButtonB">
+      <li>
+        <form method="get" action="">
+          <!-- Persist Tag Filters -->
+          {% for tag_id in tag_filters %}
+            <input type="hidden" name="tag" value="{{ tag_id }}">
+          {% endfor %}
+        
+          <!-- Persist Query -->
+          {% if query %}
+            <input type="hidden" name="q" value="{{ query }}">
+          {% endif %}
+        
+          <!-- Category Options -->
+          {% for category in categories %}
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="category" value="{{ category.id }}" id="category{{ category.id }}"
+                {% if category.id|stringformat:"s" in category_filters %}checked{% endif %}>
+              <label class="form-check-label" for="category{{ category.id }}">
+                {{ category.name }}
+              </label>
+            </div>
+          {% endfor %}
+          <button type="submit" class="btn btn-primary btn-sm w-100">Apply Filters</button>
+        </form>
+      </li>
     </ul>
   </div>
+</li>
+  
+<!-- Tags Dropdown (Multiple Selection) -->
+<li class="nav-item mx-1">
+  <div class="dropdown">
+    <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButtonC" data-bs-toggle="dropdown" aria-expanded="false">
+      <i class="fa-solid fa-filter"></i>
+      <span class="mx-1">Tags</span>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButtonC">
+      <li>
+        <form method="get" action="">
+          <!-- Persist Category Filters -->
+          {% for category_id in category_filters %}
+            <input type="hidden" name="category" value="{{ category_id }}">
+          {% endfor %}
+        
+          <!-- Persist Query -->
+          {% if query %}
+            <input type="hidden" name="q" value="{{ query }}">
+          {% endif %}
+        
+          <!-- Tag Options -->
+          {% for tag in tags %}
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="tag" value="{{ tag.id }}" id="tag{{ tag.id }}"
+                {% if tag.id|stringformat:"s" in tag_filters %}checked{% endif %}>
+              <label class="form-check-label" for="tag{{ tag.id }}">
+                {{ tag.name }}
+              </label>
+            </div>
+          {% endfor %}
+          <button type="submit" class="btn btn-primary btn-sm w-100">Apply Filters</button>
+        </form>
+        
+      </li>
+    </ul>
+  </div>
+</li>
+
+
+
+
+
+
+        <!-- List/Grid Toggle Buttons -->
+        <li class="nav-item mx-1">
+          <ul class="d-flex list-unstyled">
+            <li class="nav-item mx-1">
+              <div>
+                <a href="#" class="btn btn-outline-secondary btn-sm" id="listView">
+                  <i class="fa-solid fa-list-ul"></i>
+                </a>
+              </div>
+            </li>
+            <li class="nav-item mx-1">
+              <div>
+                <a href="#" class="btn btn-outline-secondary btn-sm" id="gridView">
+                  <i class="fa-solid fa-grip-vertical"></i>
+                </a>
+              </div>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container-fluid my-2">
+  <ul class="nav">
+    <!-- Category Display -->
+    {% if category_names %}
+      {% for category in category_names %}
+        <li class="btn btn-sm btn-outline-secondary me-2 px-1 py-0">
+          {{ category.name }}
+          <a href="?{% for cat in category_filters %}{% if cat != category.id|stringformat:'s' %}category={{ cat }}&{% endif %}{% endfor %}{% for tag in tag_filters %}tag={{ tag }}&{% endfor %}q={{ query|default:'' }}" class="text-danger ms-1">
+            <i class="fa-solid fa-xmark"></i>
+          </a>
+        </li>
+      {% endfor %}
+    {% endif %}
+
+    <!-- Active Tag Filters -->
+    {% if tag_names %}
+      {% for tag in tag_names %}
+        <li class="btn btn-sm btn-outline-secondary me-2 px-1 py-0">
+          {{ tag.name }}
+          <a href="?{% for cat in category_filters %}category={{ cat }}&{% endfor %}{% for tg in tag_filters %}{% if tg != tag.id|stringformat:'s' %}tag={{ tg }}&{% endif %}{% endfor %}q={{ query|default:'' }}" class="text-danger ms-1">
+            <i class="fa-solid fa-xmark"></i>
+          </a>
+        </li>
+      {% endfor %}
+    {% endif %}
+  </ul>
+</div>
+
 
   
 

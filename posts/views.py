@@ -12,53 +12,60 @@ from comments.models import Comment
 from filters.models import Category, Tag
 
 
-
-@login_required
 def post_list(request):
     categories = Category.objects.all()
     tags = Tag.objects.all()
 
     # Retrieve filters from GET request
-    category_filter = request.GET.get('category')
-    tag_filter = request.GET.get('tag')
+    category_filters = request.GET.getlist('category')
+    tag_filters = request.GET.getlist('tag')
     query = request.GET.get('q')
 
-    # Initialize the queryset for published posts
+    # Start with the base queryset for published posts
     posts = Post.objects.filter(status='published').prefetch_related('like_set')
 
-    # Apply category filter if provided
-    if category_filter:
-        posts = posts.filter(category__id=category_filter)
+    # Apply category filter
+    if category_filters:
+        posts = posts.filter(category__id__in=category_filters)
 
-    # Apply tag filter if provided
-    if tag_filter:
-        posts = posts.filter(tags__id=tag_filter)
+    # Apply tag filter
+    if tag_filters:
+        posts = posts.filter(tags__id__in=tag_filters)
 
-    # If there is a search query, perform fuzzy search on the title, content, and author
+    # Apply search query filter
     if query:
         posts = posts.filter(
-            Q(title__icontains=query) | 
-            Q(content__icontains=query) | 
+            Q(title__icontains=query) |
+            Q(content__icontains=query) |
             Q(author__username__icontains=query)
         )
 
-    # Get category and tag names for displaying in the UI
-    category_name = Category.objects.filter(id=category_filter).first() if category_filter else None
-    tag_name = Tag.objects.filter(id=tag_filter).first() if tag_filter else None
+    # Get filtered category and tag names for display
+    category_names = Category.objects.filter(id__in=category_filters) if category_filters else []
+    tag_names = Tag.objects.filter(id__in=tag_filters) if tag_filters else []
+
+    # Ensure distinct results (especially for many-to-many relationships like tags)
+    posts = posts.distinct()
 
     context = {
         'posts': posts,
         'current_user': request.user,
-        'query': query,  # Pre-fill the search box
+        'query': query,
         'categories': categories,
         'tags': tags,
-        'category_filter': category_filter,
-        'tag_filter': tag_filter,
-        'category_name': category_name,
-        'tag_name': tag_name,
+        'category_filters': category_filters,
+        'tag_filters': tag_filters,
+        'category_names': category_names,
+        'tag_names': tag_names,
     }
 
     return render(request, 'posts/post_list.html', context)
+
+
+
+
+
+
 
 
 

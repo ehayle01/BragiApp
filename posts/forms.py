@@ -8,7 +8,7 @@ from filters.models import Category, Tag
 class PostForm(forms.ModelForm):
     """Form for creating or editing a post."""
 
-    category = forms.ModelChoiceField(queryset=Category.objects.all(), required=False, empty_label="Select a Category")
+    category = forms.ModelMultipleChoiceField(queryset=Category.objects.all(), required=False, widget=forms.CheckboxSelectMultiple)
     tags = forms.ModelMultipleChoiceField(queryset=Tag.objects.all(), required=False, widget=forms.CheckboxSelectMultiple)
 
     class Meta:
@@ -40,7 +40,7 @@ class PostForm(forms.ModelForm):
 class PostEditForm(forms.ModelForm):
     """Form for editing an existing post."""
 
-    category = forms.ModelChoiceField(queryset=Category.objects.all(), required=False, empty_label="Select a Category")
+    category = forms.ModelMultipleChoiceField(queryset=Category.objects.all(), required=False, widget=forms.CheckboxSelectMultiple)
     tags = forms.ModelMultipleChoiceField(queryset=Tag.objects.all(), required=False, widget=forms.CheckboxSelectMultiple)
     maverick = forms.ModelChoiceField(queryset=Maverick.objects.all(), required=False, empty_label="Select a Maverick")
 
