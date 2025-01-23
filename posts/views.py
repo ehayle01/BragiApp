@@ -62,14 +62,6 @@ def post_list(request):
     return render(request, 'posts/post_list.html', context)
 
 
-
-
-
-
-
-
-
-
 # View for displaying post details
 @login_required
 def post_detail(request, pk):
@@ -125,7 +117,7 @@ def post_create(request):
     return render(request, 'posts/post_form.html', {'form': form})
 
 
-# For editing a post (post_edit view)
+# Handle publishing/unpublishing a post
 @login_required
 def post_edit(request, pk):
     post = get_object_or_404(Post, pk=pk)
@@ -133,24 +125,31 @@ def post_edit(request, pk):
     if post.author != request.user:
         return redirect('post_list')
 
-    if request.method == 'POST':
+    # Handle "Save Changes" form
+    if request.method == 'POST' and 'save_changes' in request.POST:
         form = PostEditForm(request.POST, request.FILES, instance=post, user=request.user)
-
         if form.is_valid():
-            # Save the post (which includes saving the category and tags)
-            form.save()
+            form.save()  # Save changes without affecting the status
+            return redirect('post_edit', pk=post.pk)  # Redirect to itself to refresh the page
 
-            # Redirect based on the new status
-            if post.status == 'published':
-                return redirect('post_detail', pk=post.pk)
-            else:
-                return redirect('draft_posts')
+    # Handle Publish/Unpublish
+    elif request.method == 'POST' and ('publish' in request.POST or 'unpublish' in request.POST):
+        if 'publish' in request.POST:
+            post.status = 'published'
+        elif 'unpublish' in request.POST:
+            post.status = 'draft'
+        post.save()  # Save status change
+
+        # Redirect based on new status
+        if post.status == 'published':
+            return redirect('post_detail', pk=post.pk)
+        else:
+            return redirect('draft_posts')
+
     else:
         form = PostEditForm(instance=post, user=request.user)
 
     return render(request, 'posts/post_edit.html', {'form': form, 'post': post})
-
-
 
 
 
@@ -176,3 +175,20 @@ def post_delete(request, pk):
 def draft_posts(request):
     drafts = Post.objects.filter(author=request.user, status='draft')  # Filter drafts for the logged-in user
     return render(request, 'posts/draft_list.html', {'drafts': drafts})
+
+
+@login_required
+def post_unpublish(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+
+    # Ensure the post belongs to the logged-in user
+    if post.author != request.user:
+        return redirect('post_list')
+
+    if request.method == 'POST':
+        post.status = 'draft'  # Set status to 'draft' to unpublish
+        post.save()
+        messages.success(request, 'Your post has been unpublished.')
+        return redirect('post_list')  # Redirect to list of posts
+
+    return redirect('post_detail', pk=post.pk)  # Redirect to the post detail page if not POST

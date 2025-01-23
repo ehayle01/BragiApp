@@ -1,10 +1,9 @@
-<!-- BragiApp\posts\templates\posts\post_edit.html -->
+<!-- BragiApp/posts/templates/posts/post_edit.html -->
 {% extends "base.html" %}
 
 {% block title %}Edit Post{% endblock %}
 
 {% block content %}
-
     <!-- Back Button -->
     <div class="text-left" style="position: sticky; top: 0; margin: 0; padding: 10px; background-color: #FFFBFF; z-index: 1000;">
         <button onclick="window.history.back();" class="btn btn-light">
@@ -28,53 +27,50 @@
     <div class="container py-4" style="border: 1px solid #ddd; border-radius: 8px; background-color: #f9f9f9;">
         <h4 class="mb-4">Edit Post</h4>
 
-        <!-- Form -->
-        <!-- Form Section -->
+        <!-- Form for Editing Post -->
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
 
-<!-- Form Section -->
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
+            <div class="row mt-4">
+                <!-- Publish/Unpublish Buttons -->
+                <div class="col text-center">
+                    <form method="post" enctype="multipart/form-data" style="display:inline;">
+                        {% csrf_token %}
+                        {% if post.status == 'draft' %}
+                            <button type="submit" name="publish" value="True" class="btn btn-success w-100">Publish</button>
+                            <small class="text-muted d-block mt-2 text-center">Your post will be made public.</small>
+                        {% else %}
+                            <button type="submit" name="unpublish" value="True" class="btn btn-warning w-100">Unpublish</button>
+                            <small class="text-muted d-block mt-2 text-center">Your post will be moved to drafts.</small>
+                        {% endif %}
+                    </form>
+                </div>
+                <!-- Save Changes Button -->
+                <div class="col text-center">
+                    <button type="submit" name="save_changes" value="True" class="btn btn-dark w-100">Save Changes</button>
+                </div>
+                <!-- Cancel Button -->
+                <div class="col text-center">
+                    <button type="submit" class="btn btn-outline-secondary w-100" onclick="window.location.href='{% url 'post_detail' pk=post.pk %}'">Cancel</button>
+                </div>
+            </div>
 
-    <div class="row mt-4">
-        <div class="col-md-4 text-start">
-            <!-- Publish/Unpublish Buttons -->
-            {% if post.status == 'draft' %}
-                <button type="submit" name="publish" value="True" class="btn btn-success w-100">Publish</button>
-                <small class="text-muted d-block mt-2 text-center">Your post will be made public.</small>
-            {% else %}
-                <button type="submit" name="unpublish" value="True" class="btn btn-warning w-100">Unpublish</button>
-                <small class="text-muted d-block mt-2 text-center">Your post will be moved to drafts.</small>
-            {% endif %}
-        </div>
+        </form>
 
-        <div class="col-md-4 text-center">
-            <!-- Save Button -->
-            <button type="submit" class="btn btn-dark w-100">Save Changes</button>
-            <small class="text-muted d-block mt-2">Your post will be saved to drafts.</small>
-        </div>
-
-        <div class="col-md-4 text-end">
-            <!-- Cancel Button -->
-            <button type="button" class="btn btn-outline-secondary w-100" onclick="window.location.href='{% url 'post_detail' pk=post.pk %}'">Cancel</button>
-        </div>
+        <!-- Delete Button -->
+        {% if post.author == user %}
+            <div class="mt-4 text-center">
+                <form action="{% url 'post_delete' pk=post.pk %}" method="POST" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger w-50" onclick="return confirm('Are you sure you want to delete this post?')">
+                        Delete Post
+                    </button>
+                </form>
+            </div>
+        {% endif %}
     </div>
 
-    <!-- Delete Button -->
-    {% if post.author == user %}
-        <div class="mt-4 text-center">
-            <form action="{% url 'post_delete' pk=post.pk %}" method="POST" style="display:inline;">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-danger w-50" onclick="return confirm('Are you sure you want to delete this post?')">
-                    Delete Post
-                </button>
-            </form>
-        </div>
-    {% endif %}
-</form>
 
-
-
-    </div>
-
+</div>
 {% endblock %}
